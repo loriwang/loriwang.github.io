@@ -1,0 +1,729 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="一.新的声明变量的方式&amp;emsp;&amp;emsp;在es6中出现了新的声明变量的方式,let与const,那么它们与经常使用的var有什么区别呢?
+一.let&amp;emsp;&amp;emsp;let可能是我们在使用es6中经常使用的声明方式,与var声明的不同,在es6中引入了块作用域的概念.与var相比较let才是更接近于其他语言的变量.
+1.使用方法与var一样,可以用来声明变量、数组、对象、函数等等声明变">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ECMA6学习笔记(一)">
+<meta property="og:url" content="http://yoursite.com/2017/03/25/2017-3-25-1/index.html">
+<meta property="og:site_name" content="loriWang`s Blog">
+<meta property="og:description" content="一.新的声明变量的方式&amp;emsp;&amp;emsp;在es6中出现了新的声明变量的方式,let与const,那么它们与经常使用的var有什么区别呢?
+一.let&amp;emsp;&amp;emsp;let可能是我们在使用es6中经常使用的声明方式,与var声明的不同,在es6中引入了块作用域的概念.与var相比较let才是更接近于其他语言的变量.
+1.使用方法与var一样,可以用来声明变量、数组、对象、函数等等声明变">
+<meta property="og:updated_time" content="2017-03-25T06:23:27.145Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ECMA6学习笔记(一)">
+<meta name="twitter:description" content="一.新的声明变量的方式&amp;emsp;&amp;emsp;在es6中出现了新的声明变量的方式,let与const,那么它们与经常使用的var有什么区别呢?
+一.let&amp;emsp;&amp;emsp;let可能是我们在使用es6中经常使用的声明方式,与var声明的不同,在es6中引入了块作用域的概念.与var相比较let才是更接近于其他语言的变量.
+1.使用方法与var一样,可以用来声明变量、数组、对象、函数等等声明变">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/25/2017-3-25-1/"/>
+
+
+
+
+
+  <title> ECMA6学习笔记(一) | loriWang`s Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">loriWang`s Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一步一步前行</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-ECMA,ECMA6 " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/25/2017-3-25-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="LoRi.Wang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="loriWang`s Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                ECMA6学习笔记(一)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-25T11:32:00+08:00">
+                2017-03-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ECMA6/" itemprop="url" rel="index">
+                    <span itemprop="name">ECMA6</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="一-新的声明变量的方式"><a href="#一-新的声明变量的方式" class="headerlink" title="一.新的声明变量的方式"></a>一.新的声明变量的方式</h2><p>&emsp;&emsp;在es6中出现了新的声明变量的方式,<code>let</code>与<code>const</code>,那么它们与经常使用的<code>var</code>有什么区别呢?</p>
+<h3 id="一-let"><a href="#一-let" class="headerlink" title="一.let"></a>一.let</h3><p>&emsp;&emsp;<code>let</code>可能是我们在使用es6中经常使用的声明方式,与<code>var</code>声明的不同,在es6中引入了块作用域的概念.与<code>var</code>相比较<code>let</code>才是更接近于其他语言的变量.</p>
+<h4 id="1-使用方法"><a href="#1-使用方法" class="headerlink" title="1.使用方法"></a>1.使用方法</h4><p>与<code>var</code>一样,可以用来声明变量、数组、对象、函数等等<br><br>声明变量<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> a=<span class="number">5</span>;</div><div class="line"><span class="built_in">console</span>.log(a) <span class="comment">//5</span></div></pre></td></tr></table></figure></p>
+<p>声明函数<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> b=<span class="function"><span class="keyword">function</span> (<span class="params">val</span>) </span>&#123;</div><div class="line">    alert(val)</div><div class="line">&#125;</div><div class="line">b(<span class="number">5</span>)<span class="comment">//5</span></div></pre></td></tr></table></figure></p>
+<p>声明数组及对象<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> arr=[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>];</div><div class="line"><span class="built_in">console</span>.log(arr) <span class="comment">//[1, 2, 3, 4, 5]</span></div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">let</span> <span class="built_in">Object</span>=&#123;</div><div class="line">    <span class="attr">name</span>:<span class="string">'object'</span>,</div><div class="line">    <span class="attr">number</span>:<span class="number">2</span>,</div><div class="line">    <span class="attr">say</span>:<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      <span class="built_in">console</span>.log(<span class="string">'my name is'</span>+<span class="keyword">this</span>.name)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h4 id="2-特点"><a href="#2-特点" class="headerlink" title="2.特点"></a>2.特点</h4><p>与<code>var</code>不同,<code>var</code>重复声明的时候,后面的会覆盖前面的,而let`不允许重复声明,如果重复声明会报错<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> a=<span class="number">5</span>;</div><div class="line"><span class="keyword">var</span> a=<span class="number">12</span>;</div><div class="line"><span class="built_in">console</span>.log(a) <span class="comment">//5</span></div><div class="line"></div><div class="line"><span class="keyword">let</span> b=<span class="number">5</span>;</div><div class="line"><span class="keyword">let</span> b=<span class="number">12</span>;</div><div class="line"><span class="built_in">console</span>.log(b)<span class="comment">//err  Identifier 'b' has already been declared 提示b已经被声明过了</span></div></pre></td></tr></table></figure></p>
+<p>与<code>var</code>只有函数作用域不同<code>let</code>具有块级作用域<br><br>什么叫<code>var</code>只有函数作用域,我这里理解为,<code>var</code>声明的变量,只有在函数中的局部变量,其他都为全局变量;<br>如我们最常遇到的for循环的时候<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++)&#123;</div><div class="line">    <span class="keyword">var</span> a=<span class="number">12</span></div><div class="line">&#125;</div><div class="line"><span class="built_in">console</span>.log(i)<span class="comment">//10</span></div><div class="line"><span class="built_in">console</span>.log(a)<span class="comment">//12</span></div></pre></td></tr></table></figure></p>
+<p>我们可以看到采用<code>var</code>声明的方式 最后我们都可以把 <code>i</code>和 <code>a</code>取出来<br>但是<code>var</code>在函数中声明的变量却只有在函数中能用,这就是我们所说的局部变量,如:<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> a=<span class="number">12</span>;</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    a=<span class="number">13</span>;</div><div class="line">    <span class="keyword">var</span> b=<span class="number">1</span>;</div><div class="line">    <span class="built_in">console</span>.log(b) <span class="comment">//1</span></div><div class="line">    <span class="built_in">console</span>.log(a)<span class="comment">//13</span></div><div class="line">&#125;</div><div class="line"><span class="built_in">console</span>.log(a) <span class="comment">//12</span></div><div class="line"><span class="built_in">console</span>.log(b) <span class="comment">//not defined</span></div><div class="line">test();</div><div class="line"><span class="built_in">console</span>.log(b) <span class="comment">//not defined</span></div><div class="line"><span class="built_in">console</span>.log(a) <span class="comment">//13</span></div></pre></td></tr></table></figure></p>
+<p>从上处我们可以看得到,我所定义的a为全局变量,那么它在函数中也能取的到值,并对它进行赋值等操作,而<code>b</code>则是在<code>test()</code>函数中定义的局部变量,只能在<code>test</code>这个函数内进行使用<br><br><br><br>而与<code>var</code>不同的是<code>let</code>;我们先看例子;同样是for循环<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span>(<span class="keyword">let</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++)&#123;</div><div class="line">    <span class="built_in">console</span>.log(i)<span class="comment">//输出1 -9;</span></div><div class="line">    <span class="keyword">let</span> a=<span class="number">12</span></div><div class="line">    <span class="built_in">console</span>.log(a) <span class="comment">//每次都输出12</span></div><div class="line">&#125;</div><div class="line"><span class="built_in">console</span>.log(i)<span class="comment">//not defined</span></div><div class="line"><span class="built_in">console</span>.log(a)<span class="comment">//not defined</span></div></pre></td></tr></table></figure></p>
+<p>这就是我们所说的块级作用域,只在 块中有效;与<code>for</code>类似 <code>while</code>  <code>if</code>  都是属于块,即用<code>{}</code>包括起来的就是块</p>
+<h4 id="3-块级作用域的用途"><a href="#3-块级作用域的用途" class="headerlink" title="3.块级作用域的用途"></a>3.块级作用域的用途</h4><h5 id="封闭空间"><a href="#封闭空间" class="headerlink" title="封闭空间"></a>封闭空间</h5><p>在<code>var</code>使用的时候 为了防止内部变量暴露出来我们一般使用这样的声明方式<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> a=<span class="number">12</span>;</div><div class="line">  <span class="built_in">console</span>.log(a)  <span class="comment">//12</span></div><div class="line">&#125;)()</div><div class="line"><span class="built_in">console</span>.log(a) <span class="comment">//not defined</span></div><div class="line"><span class="string">`</span></div></pre></td></tr></table></figure></p>
+<p> 而封闭空间常用的状况是这样的:<br> <figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!--  html部分--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">value</span>=<span class="string">'a'</span> <span class="attr">type</span>=<span class="string">'button'</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">value</span>=<span class="string">'b'</span> <span class="attr">type</span>=<span class="string">'button'</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">value</span>=<span class="string">'c'</span> <span class="attr">type</span>=<span class="string">'button'</span>&gt;</span></div></pre></td></tr></table></figure></p>
+ <figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> btn=<span class="built_in">document</span>.getElementsByTagName(<span class="string">'input'</span>);</div><div class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">0</span>;i&lt;btn.length;i++)&#123;</div><div class="line">   (<span class="function"><span class="keyword">function</span>(<span class="params">i</span>) </span>&#123;</div><div class="line">     btn[i].onclick=<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">       alert(i)</div><div class="line">     &#125;</div><div class="line">   &#125;)(i)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p> 但是有了<code>let</code>之后就不一样了<br> <figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span>(<span class="keyword">let</span> i=<span class="number">0</span>;i ,btn.length;i++)&#123;</div><div class="line">    btn[i].onclick=<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">        alert(<span class="keyword">this</span>.value)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>总结:块级作用域可以看做为匿名函数的立即调用</p>
+<h3 id="二-const"><a href="#二-const" class="headerlink" title="二.const"></a>二.const</h3><p>用来定义<code>常量</code>,<br>一旦被赋值,无法被修改;尝试修改会报错<code>Assignment to constant variable.</code><br><br><code>const</code>定义常量的时候,必须赋值,否则会报错<code>Missing initializer in const declaration</code><br><br>用途:为了防止意外修改变量,比如:引入库名,组件名<br><br><br><br><br><br></p>
+<h2 id="二-新的字符串拼接方法"><a href="#二-新的字符串拼接方法" class="headerlink" title="二.新的字符串拼接方法"></a>二.新的字符串拼接方法</h2><p> 字符串模板: <code>`` </code> 数字1左边的符号<br> 引入变量的方法<code>${val}</code><br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> a=<span class="string">'CCTV'</span>;</div><div class="line"><span class="keyword">var</span> str=<span class="string">`<span class="subst">$&#123;a&#125;</span>拼接字符串`</span></div></pre></td></tr></table></figure></p>
+<h2 id="三-解构赋值"><a href="#三-解构赋值" class="headerlink" title="三.解构赋值"></a>三.解构赋值</h2><p>改变赋值的方法<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//原来的赋值方法</span></div><div class="line">    <span class="keyword">var</span> a=<span class="number">3</span></div><div class="line">    <span class="keyword">var</span> b=<span class="number">4</span></div><div class="line">    <span class="keyword">var</span> c=<span class="number">5</span>;</div><div class="line">    <span class="built_in">console</span>.log(a,b,c)  <span class="comment">//3 4 5</span></div><div class="line"><span class="comment">//解构赋值</span></div><div class="line">    <span class="keyword">var</span> [a,b,c]=[<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</div><div class="line">    <span class="built_in">console</span>.log(a,b,c)  <span class="comment">//3 4 5</span></div></pre></td></tr></table></figure></p>
+<p>解构赋值的情况<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//json的赋值</span></div><div class="line"><span class="keyword">var</span> &#123;a,b,c&#125;=&#123;<span class="attr">b</span>:<span class="number">5</span>,<span class="attr">a</span>:<span class="number">12</span>,<span class="attr">c</span>:<span class="number">15</span>&#125;;</div><div class="line"><span class="built_in">console</span>.log(a)  <span class="comment">//12</span></div><div class="line"><span class="comment">//会去后面寻找对应的值,而不是一一对应;</span></div></pre></td></tr></table></figure></p>
+<p>解构赋值的模式匹配:两边的结构应该一样<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> [a,[b,c],d]=[<span class="number">1</span>,[<span class="number">2</span>,<span class="number">3</span>],<span class="number">4</span>]</div><div class="line"></div><div class="line"><span class="keyword">var</span> [&#123;a,e&#125;,[b,c],d]=[&#123;<span class="attr">e</span>:<span class="string">'eee'</span>&#125;,[<span class="number">2</span>,<span class="number">3</span>],<span class="number">4</span>]</div></pre></td></tr></table></figure></p>
+<p>用途  接口的赋值;<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"> <span class="keyword">var</span> json=[</div><div class="line">     &#123;<span class="attr">statues</span>:&#123;<span class="attr">id</span>:<span class="number">2323232323</span>,<span class="attr">name</span>:<span class="string">'lori.wang'</span>&#125;&#125;,</div><div class="line">     &#123;<span class="attr">info</span>:&#123;<span class="attr">content</span>:<span class="string">'解构赋值'</span>&#125;&#125;</div><div class="line"> ]</div><div class="line"><span class="keyword">var</span> [&#123;<span class="attr">statues</span>:&#123;id,name&#125;&#125;,&#123;<span class="attr">info</span>:&#123;content&#125;&#125;]=json;</div><div class="line"> </div><div class="line"></div><div class="line"><span class="string">`</span></div></pre></td></tr></table></figure></p>
+<p>解构给默认值;<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> [a=<span class="number">2</span>,id=<span class="number">0</span>]=[]</div></pre></td></tr></table></figure></p>
+<p>个人感觉,没啥卵用,可能 是接触的不是太多,还望大家多多指教</p>
+<p align="right">—by  lori.Wang</p>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/24/first_blog/" rel="next" title="第一个博客">
+                <i class="fa fa-chevron-left"></i> 第一个博客
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="LoRi.Wang" />
+          <p class="site-author-name" itemprop="name">LoRi.Wang</p>
+           
+              <p class="site-description motion-element" itemprop="description">一步一步前行</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-新的声明变量的方式"><span class="nav-number">1.</span> <span class="nav-text">一.新的声明变量的方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一-let"><span class="nav-number">1.1.</span> <span class="nav-text">一.let</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-使用方法"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.使用方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-特点"><span class="nav-number">1.1.2.</span> <span class="nav-text">2.特点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-块级作用域的用途"><span class="nav-number">1.1.3.</span> <span class="nav-text">3.块级作用域的用途</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#封闭空间"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">封闭空间</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二-const"><span class="nav-number">1.2.</span> <span class="nav-text">二.const</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-新的字符串拼接方法"><span class="nav-number">2.</span> <span class="nav-text">二.新的字符串拼接方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-解构赋值"><span class="nav-number">3.</span> <span class="nav-text">三.解构赋值</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LoRi.Wang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
