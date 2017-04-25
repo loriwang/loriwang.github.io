@@ -87,19 +87,40 @@
 
 
 
-<meta name="description" content="jQuery中$(document).ready()的作用类似于传统JavaScript中的window.onload方法，不过与window.onload方法还是有区别的。
-1.简化写法window.onload没有简化写法 $(document).ready(function(){})可以简写成$(function(){});1234$(function() &amp;#123;  // do som">
+<meta name="description" content="最近在学习vue,发现vue-cli中有使用postCss,所以正好在gulp中也使用一下postCss
+准备工作
+node.js
+npm
+gulp一.安装1npm install --save-dev gulp-postcss
+
+
+二.引用在gulpfile.js中引入12var gulp=require(&apos;gulp&apos;);var postcss=require(&apos;gulp-postcss&apos;)
+三">
 <meta property="og:type" content="article">
-<meta property="og:title" content="window.onload与$(document).ready()区别">
-<meta property="og:url" content="http://yoursite.com/2017/04/24/js/onload区别/index.html">
+<meta property="og:title" content="gulp中postCss使用">
+<meta property="og:url" content="http://yoursite.com/2017/04/25/gulp/postcss/index.html">
 <meta property="og:site_name" content="loriWang`s Blog">
-<meta property="og:description" content="jQuery中$(document).ready()的作用类似于传统JavaScript中的window.onload方法，不过与window.onload方法还是有区别的。
-1.简化写法window.onload没有简化写法 $(document).ready(function(){})可以简写成$(function(){});1234$(function() &amp;#123;  // do som">
-<meta property="og:updated_time" content="2017-04-24T14:16:29.341Z">
+<meta property="og:description" content="最近在学习vue,发现vue-cli中有使用postCss,所以正好在gulp中也使用一下postCss
+准备工作
+node.js
+npm
+gulp一.安装1npm install --save-dev gulp-postcss
+
+
+二.引用在gulpfile.js中引入12var gulp=require(&apos;gulp&apos;);var postcss=require(&apos;gulp-postcss&apos;)
+三">
+<meta property="og:updated_time" content="2017-04-25T02:21:00.563Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="window.onload与$(document).ready()区别">
-<meta name="twitter:description" content="jQuery中$(document).ready()的作用类似于传统JavaScript中的window.onload方法，不过与window.onload方法还是有区别的。
-1.简化写法window.onload没有简化写法 $(document).ready(function(){})可以简写成$(function(){});1234$(function() &amp;#123;  // do som">
+<meta name="twitter:title" content="gulp中postCss使用">
+<meta name="twitter:description" content="最近在学习vue,发现vue-cli中有使用postCss,所以正好在gulp中也使用一下postCss
+准备工作
+node.js
+npm
+gulp一.安装1npm install --save-dev gulp-postcss
+
+
+二.引用在gulpfile.js中引入12var gulp=require(&apos;gulp&apos;);var postcss=require(&apos;gulp-postcss&apos;)
+三">
 
 
 
@@ -127,13 +148,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/04/24/js/onload区别/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/04/25/gulp/postcss/"/>
 
 
 
 
 
-  <title> window.onload与$(document).ready()区别 | loriWang`s Blog </title>
+  <title> gulp中postCss使用 | loriWang`s Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -261,8 +282,8 @@
   
   
 
-  <article class="post post-type-jquery " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/24/js/onload区别/">
+  <article class="post post-type-gulp " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/25/gulp/postcss/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="LoRi.Wang">
@@ -283,7 +304,7 @@
             
             
               
-                window.onload与$(document).ready()区别
+                gulp中postCss使用
               
             
           </h1>
@@ -298,8 +319,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-24T22:02:00+08:00">
-                2017-04-24
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-25T08:25:00+08:00">
+                2017-04-25
               </time>
             
 
@@ -321,8 +342,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/jquery/" itemprop="url" rel="index">
-                    <span itemprop="name">jquery</span>
+                  <a href="/categories/gulp/" itemprop="url" rel="index">
+                    <span itemprop="name">gulp</span>
                   </a>
                 </span>
 
@@ -356,14 +377,25 @@
       
 
       
-        <p>jQuery中<code>$(document).ready()</code>的作用类似于传统JavaScript中的<code>window.onload</code>方法，不过与<code>window.onload</code>方法还是有区别的。<br></p>
-<h2 id="1-简化写法"><a href="#1-简化写法" class="headerlink" title="1.简化写法"></a>1.简化写法</h2><p>window.onload没有简化写法 <br><br>$(document).ready(function(){})可以简写成$(function(){});<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="comment">// do something</span></div><div class="line">&#125;)</div><div class="line"><span class="string">`</span></div></pre></td></tr></table></figure></p>
-<h2 id="2-编写个数不同"><a href="#2-编写个数不同" class="headerlink" title="2.编写个数不同"></a>2.编写个数不同</h2><p>window.onload不能同时编写多个，如果有多个window.onload方法，只会执行一个 <br><br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">window</span>.onload=<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  alert(<span class="number">1</span>)</div><div class="line">&#125;;</div><div class="line"><span class="built_in">window</span>.onload=<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  alert(<span class="number">2</span>)</div><div class="line">&#125;</div><div class="line"><span class="string">`</span></div></pre></td></tr></table></figure></p>
-<p>结果只输出<code>2</code><br><br></p>
-<p>$(document).ready()可以同时编写多个，并且都可以得到执行<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">    alert(<span class="string">'hello world1'</span>)</div><div class="line">&#125;);</div><div class="line">$(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">    alert(<span class="string">'hello world2'</span>)</div><div class="line">&#125;);</div><div class="line"><span class="string">`</span></div></pre></td></tr></table></figure></p>
-<p>两次都能正常输出</p>
-<h2 id="3-执行时间"><a href="#3-执行时间" class="headerlink" title="3.执行时间"></a>3.执行时间</h2><p>window.onload必须等到页面内包括图片的所有元素加载完毕后才能执行。 <br><br>$(document).ready()是DOM结构绘制完毕后就执行，不必等到加载完毕。</p>
-<h2 id="4-注意项"><a href="#4-注意项" class="headerlink" title="4.注意项"></a>4.注意项</h2><p>由于在 $(document).ready() 方法内注册的事件，只要 DOM 就绪就会被执行，因此可能此时元素的关联文件未下载完。例如与图片有关的 html 下载完毕，并且已经解析为 DOM 树了，但很有可能图片还没有加载完毕，所以例如图片的高度和宽度这样的属性此时不一定有效。<br><br>要解决这个问题，可以使用 Jquery 中另一个关于页面加载的方法 —load() 方法。 Load() 方法会在元素的 onload 事件中绑定一个处理函数。如果处理函数绑定给 window 对象，则会在所有内容 ( 包括窗口、框架、对象和图像等 ) 加载完毕后触发，如果处理函数绑定在元素上，则会在元素的内容加载完毕后触发。 <br><br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// jquery 中</span></div><div class="line">$(<span class="built_in">window</span>).load(<span class="function"><span class="keyword">function</span> (<span class="params"></span>)</span>&#123; </div><div class="line">       <span class="comment">// 编写代码  </span></div><div class="line">&#125;);</div><div class="line"><span class="comment">// 等价于 JavaScript 中的以下代码 </span></div><div class="line">Window.onload = <span class="function"><span class="keyword">function</span> (<span class="params"></span>)</span>&#123; </div><div class="line">     <span class="comment">// 编写代码 </span></div><div class="line">&#125;</div><div class="line"><span class="string">`</span></div></pre></td></tr></table></figure></p>
+        <p>最近在学习vue,发现vue-cli中有使用postCss,所以正好在gulp中也使用一下postCss<br></p>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><ul>
+<li>node.js</li>
+<li>npm</li>
+<li>gulp<h2 id="一-安装"><a href="#一-安装" class="headerlink" title="一.安装"></a>一.安装</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install --save-dev gulp-postcss</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="二-引用"><a href="#二-引用" class="headerlink" title="二.引用"></a>二.引用</h2><p>在gulpfile.js中引入<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> gulp=<span class="built_in">require</span>(<span class="string">'gulp'</span>);</div><div class="line"><span class="keyword">var</span> postcss=<span class="built_in">require</span>(<span class="string">'gulp-postcss'</span>)</div></pre></td></tr></table></figure></p>
+<h2 id="三-使用"><a href="#三-使用" class="headerlink" title="三.使用"></a>三.使用</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> processors = [];</div><div class="line"><span class="keyword">return</span> gulp.src(<span class="string">'./postcss/*.css'</span>)</div><div class="line">    .pipe(postcss(processors))</div><div class="line">    .pipe(gulp.dest(<span class="string">'./css'</span>))</div></pre></td></tr></table></figure>
+<p>其中<code>processors</code>是我们要使用的插件<br><br>现在我们运行一下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gulp default</div></pre></td></tr></table></figure></p>
+<p>现在我们看到 在css目录下生成了一个css文件,但是并没有发生任何改变,这是因为我们还没有使用<code>postcss</code>的插件<br><br>现在我们来使用<code>postcss</code>的插件</p>
+<h2 id="postcss插件"><a href="#postcss插件" class="headerlink" title="postcss插件"></a>postcss插件</h2><p>现在我们添加需要的PostCSS插件：Autoprefixer(处理浏览器私有前缀)，cssnext(使用CSS未来的语法),precss(像Sass的函数)。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">npm install autoprefixer --save-dev </div><div class="line">npm install cssnext --save-dev </div><div class="line">npm install precss --save-dev</div></pre></td></tr></table></figure></p>
+<p>其实也可以在命令中执行下面的代码，也可以达到相同的效果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install autoprefixer cssnext precss --save-dev</div></pre></td></tr></table></figure></p>
+<p>但是这种使用方法有的时候会很慢,建议心急的用户使用第一种</p>
+<h2 id="postcss插件的使用"><a href="#postcss插件的使用" class="headerlink" title="postcss插件的使用"></a>postcss插件的使用</h2><p>引入<br><br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> autoprefixer=<span class="built_in">require</span>(<span class="string">'autoprefixer'</span>)</div><div class="line"><span class="keyword">var</span> cssnext=<span class="built_in">require</span>(<span class="string">'cssnext'</span>);</div><div class="line"><span class="keyword">var</span> precss=<span class="built_in">require</span>(<span class="string">'precss'</span>)</div></pre></td></tr></table></figure></p>
+<p>使用:<br><br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">gulp.task(<span class="string">'postcss'</span>,<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> processors = [</div><div class="line">        autoprefixer,</div><div class="line">        cssnext,</div><div class="line">        precss</div><div class="line">    ];</div><div class="line">    <span class="keyword">return</span> gulp.src(<span class="string">'./postcss/*.css'</span>)</div><div class="line">        .pipe(postcss(processors))</div><div class="line">        .pipe(gulp.dest(<span class="string">'./css'</span>))</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>我们测试一下<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">/* Testing autoprefixer */</div><div class="line"> .autoprefixer &#123; </div><div class="line"> display: flex; </div><div class="line"> &#125; /* Testing cssnext */ </div><div class="line"> .cssnext &#123;</div><div class="line">  background: color(red alpha(-10%)); </div><div class="line">  &#125; /* Testing precss */ </div><div class="line">  .precss &#123;</div><div class="line">   @if 3 &lt; 5 &#123; </div><div class="line">   background: green;</div><div class="line">    &#125; </div><div class="line">    @else &#123; </div><div class="line">    background: blue; </div><div class="line">    &#125;</div><div class="line">     &#125;</div></pre></td></tr></table></figure></p>
+<p>输出结果:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/* Testing autoprefixer */</span> </div><div class="line"><span class="selector-class">.autoprefixer</span> &#123; </div><div class="line"><span class="attribute">display</span>: -webkit-box; </div><div class="line"><span class="attribute">display</span>: -webkit-flex;</div><div class="line"> <span class="attribute">display</span>: -ms-flexbox; </div><div class="line"> <span class="attribute">display</span>: flex; </div><div class="line"> &#125; <span class="comment">/* Testing cssnext */</span></div><div class="line">  <span class="selector-class">.cssnext</span> &#123; </div><div class="line">    <span class="attribute">background</span>: <span class="built_in">rgba</span>(255, 0, 0, 0.9);</div><div class="line">   &#125; <span class="comment">/* Testing precss */</span> </div><div class="line">   <span class="selector-class">.precss</span> &#123; </div><div class="line">    <span class="attribute">background</span>: green</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>如上面编译出来的代码你应该看到了<code>Autoprefixer</code>给需要的属性添加了浏览器的私有前缀，第二个任务<code>cssnext</code>将颜色转换成<code>rgba()</code>，第三部分PreCSS检查了<code>@if @else</code>，编译符合需求的代码。</p>
 <p align="right">—by  lori.Wang</p>
       
     </div>
@@ -400,8 +432,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/04/24/others/webstorm1/" rel="next" title="webstrom 热加载问题">
-                <i class="fa fa-chevron-left"></i> webstrom 热加载问题
+              <a href="/2017/04/24/js/onload区别/" rel="next" title="window.onload与$(document).ready()区别">
+                <i class="fa fa-chevron-left"></i> window.onload与$(document).ready()区别
               </a>
             
           </div>
@@ -409,10 +441,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/04/25/gulp/postcss/" rel="prev" title="gulp中postCss使用">
-                gulp中postCss使用 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -541,7 +569,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-简化写法"><span class="nav-number">1.</span> <span class="nav-text">1.简化写法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-编写个数不同"><span class="nav-number">2.</span> <span class="nav-text">2.编写个数不同</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-执行时间"><span class="nav-number">3.</span> <span class="nav-text">3.执行时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-注意项"><span class="nav-number">4.</span> <span class="nav-text">4.注意项</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#准备工作"><span class="nav-number">1.</span> <span class="nav-text">准备工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一-安装"><span class="nav-number">2.</span> <span class="nav-text">一.安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-引用"><span class="nav-number">3.</span> <span class="nav-text">二.引用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-使用"><span class="nav-number">4.</span> <span class="nav-text">三.使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#postcss插件"><span class="nav-number">5.</span> <span class="nav-text">postcss插件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#postcss插件的使用"><span class="nav-number">6.</span> <span class="nav-text">postcss插件的使用</span></a></li></ol></div>
             
 
           </div>
