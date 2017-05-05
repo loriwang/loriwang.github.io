@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="angular,bootstrap,angular-ui-bootstrap," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -87,34 +87,19 @@
 
 
 
-<meta name="description" content="一.需要安装的东西
-angularJs1  我用的版本是1.5.3,官方建议1.4.x
-bootstrap.css  官方建议是 2.3.x以上 我用的是3.3.x
-angular-ui-bootstrap 下载地址,我用的版本是2.5.0二.注入1angular.module(&apos;myModule&apos;, [&apos;ui.bootstrap&apos;]);
-
-
-三.分页的标签12345678910111213141">
+<meta name="description" content="最近在学习vue,涉及到一个父子组件通信,觉得有必要来写下来了解一下
+一.父对子组件的通信1.vue1中父对子组件通信在父组件中使用绑定属性的方式来对子组件推送数据如在父组件中:123456&amp;lt;ratingselect :select-type=&quot;selectType&quot;              :only-content=&quot;onlyContent&quot;              :desc=&quot;f">
 <meta property="og:type" content="article">
-<meta property="og:title" content="angular-ui-bootstrap分页">
-<meta property="og:url" content="http://yoursite.com/2017/04/01/angular/angular-ui-bootstrap1/index.html">
+<meta property="og:title" content="Vue中组件上之间通信">
+<meta property="og:url" content="http://yoursite.com/2017/05/05/vue/组件间通信/index.html">
 <meta property="og:site_name" content="loriWang`s Blog">
-<meta property="og:description" content="一.需要安装的东西
-angularJs1  我用的版本是1.5.3,官方建议1.4.x
-bootstrap.css  官方建议是 2.3.x以上 我用的是3.3.x
-angular-ui-bootstrap 下载地址,我用的版本是2.5.0二.注入1angular.module(&apos;myModule&apos;, [&apos;ui.bootstrap&apos;]);
-
-
-三.分页的标签12345678910111213141">
-<meta property="og:updated_time" content="2017-04-03T00:47:50.436Z">
+<meta property="og:description" content="最近在学习vue,涉及到一个父子组件通信,觉得有必要来写下来了解一下
+一.父对子组件的通信1.vue1中父对子组件通信在父组件中使用绑定属性的方式来对子组件推送数据如在父组件中:123456&amp;lt;ratingselect :select-type=&quot;selectType&quot;              :only-content=&quot;onlyContent&quot;              :desc=&quot;f">
+<meta property="og:updated_time" content="2017-05-05T06:43:17.632Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="angular-ui-bootstrap分页">
-<meta name="twitter:description" content="一.需要安装的东西
-angularJs1  我用的版本是1.5.3,官方建议1.4.x
-bootstrap.css  官方建议是 2.3.x以上 我用的是3.3.x
-angular-ui-bootstrap 下载地址,我用的版本是2.5.0二.注入1angular.module(&apos;myModule&apos;, [&apos;ui.bootstrap&apos;]);
-
-
-三.分页的标签12345678910111213141">
+<meta name="twitter:title" content="Vue中组件上之间通信">
+<meta name="twitter:description" content="最近在学习vue,涉及到一个父子组件通信,觉得有必要来写下来了解一下
+一.父对子组件的通信1.vue1中父对子组件通信在父组件中使用绑定属性的方式来对子组件推送数据如在父组件中:123456&amp;lt;ratingselect :select-type=&quot;selectType&quot;              :only-content=&quot;onlyContent&quot;              :desc=&quot;f">
 
 
 
@@ -142,13 +127,13 @@ angular-ui-bootstrap 下载地址,我用的版本是2.5.0二.注入1angular.modu
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/04/01/angular/angular-ui-bootstrap1/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/05/05/vue/组件间通信/"/>
 
 
 
 
 
-  <title> angular-ui-bootstrap分页 | loriWang`s Blog </title>
+  <title> Vue中组件上之间通信 | loriWang`s Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -276,8 +261,8 @@ angular-ui-bootstrap 下载地址,我用的版本是2.5.0二.注入1angular.modu
   
   
 
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/01/angular/angular-ui-bootstrap1/">
+  <article class="post post-type-vue " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/05/vue/组件间通信/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="LoRi.Wang">
@@ -298,7 +283,7 @@ angular-ui-bootstrap 下载地址,我用的版本是2.5.0二.注入1angular.modu
             
             
               
-                angular-ui-bootstrap分页
+                Vue中组件上之间通信
               
             
           </h1>
@@ -313,8 +298,8 @@ angular-ui-bootstrap 下载地址,我用的版本是2.5.0二.注入1angular.modu
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-01T21:52:00+08:00">
-                2017-04-01
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-05T13:23:00+08:00">
+                2017-05-05
               </time>
             
 
@@ -336,8 +321,8 @@ angular-ui-bootstrap 下载地址,我用的版本是2.5.0二.注入1angular.modu
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/angular/" itemprop="url" rel="index">
-                    <span itemprop="name">angular</span>
+                  <a href="/categories/vue/" itemprop="url" rel="index">
+                    <span itemprop="name">vue</span>
                   </a>
                 </span>
 
@@ -371,27 +356,14 @@ angular-ui-bootstrap 下载地址,我用的版本是2.5.0二.注入1angular.modu
       
 
       
-        <h1 id="一-需要安装的东西"><a href="#一-需要安装的东西" class="headerlink" title="一.需要安装的东西"></a>一.需要安装的东西</h1><ul>
-<li>angularJs1  我用的版本是1.5.3,官方建议1.4.x</li>
-<li>bootstrap.css  官方建议是 2.3.x以上 我用的是3.3.x</li>
-<li>angular-ui-bootstrap <a href="&quot;https://angular-ui.github.io/bootstrap/&quot;">下载地址</a>,我用的版本是2.5.0<h1 id="二-注入"><a href="#二-注入" class="headerlink" title="二.注入"></a>二.注入</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">angular.module(<span class="string">'myModule'</span>, [<span class="string">'ui.bootstrap'</span>]);</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h1 id="三-分页的标签"><a href="#三-分页的标签" class="headerlink" title="三.分页的标签"></a>三.分页的标签</h1><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">ul</span> <span class="attr">uib-pagination</span></span></div><div class="line">    <span class="attr">class</span>=<span class="string">"pagination-lg"</span></div><div class="line">    <span class="attr">total-items</span>=<span class="string">"bigTotalItems"</span></div><div class="line">    <span class="attr">ng-model</span>=<span class="string">"CurrentPage"</span></div><div class="line">    <span class="attr">ng-change</span>=<span class="string">"pageChanged(CurrentPage)"</span></div><div class="line">    <span class="attr">max-size</span>=<span class="string">"maxSize"</span></div><div class="line">    <span class="attr">boundary-link-numbers</span>=<span class="string">"false"</span></div><div class="line">    <span class="attr">boundary-links</span>=<span class="string">"true"</span></div><div class="line">    <span class="attr">rotate</span>=<span class="string">"true"</span></div><div class="line">    <span class="attr">force-ellipses</span>=<span class="string">"true"</span></div><div class="line">    <span class="attr">last-text</span>=<span class="string">"最后一页"</span></div><div class="line">    <span class="attr">first-text</span>=<span class="string">"第一页"</span></div><div class="line">    <span class="attr">next-text</span>=<span class="string">"下一页"</span></div><div class="line">    <span class="attr">previous-text</span>=<span class="string">"上一页"</span></div><div class="line">&gt;<span class="tag">&lt;/<span class="name">ul</span>&gt;</span></div></pre></td></tr></table></figure>
-<p>说明</p>
-<ul>
-<li><code>ng-model</code> 绑定页码值;可以设定刚打开时的页码值,也会触发<code>ng-change</code>函数</li>
-<li><code>ng-change</code> 页码改变时触发的函数</li>
-<li><code>total-items</code> 总共多少条数据</li>
-<li><code>max-size</code>  最多显示多少个页码,即超出多少页码多余的页码会隐藏</li>
-<li><code>previous-text</code> 上一页的文字,默认<code>Previous</code></li>
-<li><code>next-text</code> 下一页的文字,默认<code>Next</code></li>
-<li><code>first-text</code> 第一页的文字,默认<code>First</code></li>
-<li><code>last-text</code> 第一页的文字,默认<code>Last</code></li>
-<li><code>force-ellipses</code> 设定<code>rotate</code>为<code>true</code>;且当前页少于最大页时候 会预读下面的页数</li>
-<li><code>rotate</code>  当前页是否一直可见</li>
-</ul>
-
+        <p>最近在学习vue,涉及到一个父子组件通信,觉得有必要来写下来了解一下</p>
+<h2 id="一-父对子组件的通信"><a href="#一-父对子组件的通信" class="headerlink" title="一.父对子组件的通信"></a>一.父对子组件的通信</h2><h4 id="1-vue1中父对子组件通信"><a href="#1-vue1中父对子组件通信" class="headerlink" title="1.vue1中父对子组件通信"></a>1.vue1中父对子组件通信</h4><p>在父组件中使用绑定属性的方式来对子组件推送数据<br><br>如在父组件中:<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">ratingselect</span> <span class="attr">:select-type</span>=<span class="string">"selectType"</span></span></div><div class="line">              <span class="attr">:only-content</span>=<span class="string">"onlyContent"</span></div><div class="line">              <span class="attr">:desc</span>=<span class="string">"food.desc"</span></div><div class="line">              <span class="attr">:ratings</span>=<span class="string">"food.ratings"</span>&gt;</div><div class="line">  </div><div class="line"><span class="tag">&lt;/<span class="name">ratingselect</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>在这我们为ratingselect组件通知了四个属性,通过绑定属性的方式<code>select-type</code>是子组件得到的key,但是在子组件中<br>得到的属性是驼峰方式的写法也就是父组件中通知的是<code>select-type</code>、<code>only-content</code>、<code>desc</code>、<code>ratings</code>,子组件得到的是<code>selectType</code>、<code>onlyContent</code>、<code>desc</code>、<code>ratings</code><br><br>在子组件中是在props中得到父组件穿回来的信息<br>如在<code>ratingselect</code>组件中<br><figure class="highlight plain"><figcaption><span>6</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">export default &#123;</div><div class="line">        props: &#123;</div><div class="line">            ratings: &#123;</div><div class="line">                type: Array,</div><div class="line">              default() &#123;</div><div class="line">                    return [];</div><div class="line">              &#125;</div><div class="line">            &#125;,</div><div class="line">          selectType: &#123;</div><div class="line">            type: Number,</div><div class="line">            default: ALL</div><div class="line">          &#125;,</div><div class="line">          onlyContent: &#123;</div><div class="line">            type: Boolean,</div><div class="line">            default: false</div><div class="line">          &#125;,</div><div class="line">          desc: &#123;</div><div class="line">            type: Object,</div><div class="line">            default() &#123;</div><div class="line">              return &#123;</div><div class="line">                all: &apos;全部&apos;,</div><div class="line">                positive: &apos;满意&apos;,</div><div class="line">                negative: &apos;吐槽&apos;</div><div class="line">              &#125;;</div><div class="line">            &#125;</div><div class="line">          &#125;</div><div class="line">        &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>此时在这里<code>type</code>是我们要接受的数据类型,<code>default</code>是当没有数据来传送的时候默认的值.<br><br>如<code>ratings</code>假如没传的时候会默认为空数组,其他也是类似.<br></p>
+<h2 id="二-子组件向父组件传值"><a href="#二-子组件向父组件传值" class="headerlink" title="二.子组件向父组件传值"></a>二.子组件向父组件传值</h2><h4 id="1-vue1中子组件向父组件传值"><a href="#1-vue1中子组件向父组件传值" class="headerlink" title="1.vue1中子组件向父组件传值"></a>1.vue1中子组件向父组件传值</h4><p>在子组件中通过<code>$dispatch</code>方法派发事件<br>如在<code>ratingselect</code>组件中<br><figure class="highlight plain"><figcaption><span>6</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">methods: &#123;</div><div class="line">          toggleContent(event)&#123;</div><div class="line">            this.onlyContent = !this.onlyContent;</div><div class="line">            this.$dispatch(&apos;content.toggle&apos;, this.onlyContent);</div><div class="line">          &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>如上,我们注册了个toggleContent事件,这个事件每次点击的时候会把onlyContent取反,然后在吧值派发到父组件中<br><br>在父组件中,我们在<code>events</code>中得到子组件派发的事件<br><br>如:<br><figure class="highlight plain"><figcaption><span>6</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">events: &#123;</div><div class="line">  &apos;content.toggle&apos;(onlyContent) &#123;</div><div class="line">      this.onlyContent = onlyContent;</div><div class="line">    this.$nextTick(() =&gt; &#123;</div><div class="line">      this.scroll.refresh();</div><div class="line">    &#125;);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>如上:这里我们就接收到了子组件派发的事件<code>content.toggle</code>,括号中的<code>onlyContent</code>使我们子组件中传回来的值,函数内部则是这个事件触发之后我们要处理的事情<br></p>
+<p align="right">—by  lori.Wang</p>
       
     </div>
 
@@ -418,16 +390,6 @@ angular-ui-bootstrap 下载地址,我用的版本是2.5.0二.注入1angular.modu
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/angular/" rel="tag"># angular</a>
-          
-            <a href="/tags/bootstrap/" rel="tag"># bootstrap</a>
-          
-            <a href="/tags/angular-ui-bootstrap/" rel="tag"># angular-ui-bootstrap</a>
-          
-        </div>
-      
 
       
         
@@ -437,8 +399,8 @@ angular-ui-bootstrap 下载地址,我用的版本是2.5.0二.注入1angular.modu
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/03/30/bowerStudy1/" rel="next" title="bower入门(一)">
-                <i class="fa fa-chevron-left"></i> bower入门(一)
+              <a href="/2017/05/02/Interview Questions/base1/" rel="next" title="前端面试题基础(一)">
+                <i class="fa fa-chevron-left"></i> 前端面试题基础(一)
               </a>
             
           </div>
@@ -446,10 +408,6 @@ angular-ui-bootstrap 下载地址,我用的版本是2.5.0二.注入1angular.modu
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/04/03/js/闭包/" rel="prev" title="闭包(一)">
-                闭包(一) <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -578,7 +536,7 @@ angular-ui-bootstrap 下载地址,我用的版本是2.5.0二.注入1angular.modu
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一-需要安装的东西"><span class="nav-number">1.</span> <span class="nav-text">一.需要安装的东西</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二-注入"><span class="nav-number">2.</span> <span class="nav-text">二.注入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三-分页的标签"><span class="nav-number">3.</span> <span class="nav-text">三.分页的标签</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-父对子组件的通信"><span class="nav-number">1.</span> <span class="nav-text">一.父对子组件的通信</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-vue1中父对子组件通信"><span class="nav-number">1.0.1.</span> <span class="nav-text">1.vue1中父对子组件通信</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-子组件向父组件传值"><span class="nav-number">2.</span> <span class="nav-text">二.子组件向父组件传值</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-vue1中子组件向父组件传值"><span class="nav-number">2.0.1.</span> <span class="nav-text">1.vue1中子组件向父组件传值</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
