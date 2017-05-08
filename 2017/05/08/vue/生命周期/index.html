@@ -87,19 +87,18 @@
 
 
 
-<meta name="description" content="最近在学习vue,涉及到一个父子组件通信,觉得有必要来写下来了解一下
-一.父对子组件的通信1.vue1中父对子组件通信在父组件中使用绑定属性的方式来对子组件推送数据如在父组件中:123456&amp;lt;ratingselect :select-type=&quot;selectType&quot;              :only-content=&quot;onlyContent&quot;              :desc=&quot;f">
+<meta name="description" content="一.什么是生命周期我们来了解一下vue中的生命周期(也称钩子函数)什么事生命周期呢,也就是从开始创建、初始化数据、编译模板、挂载Dom、渲染→更新→渲染、卸载等一系列过程，我们称这是Vue的生命周期。通俗说就是Vue实例从创建到销毁的过程，就是生命周期。换个方式来说就是vue实例(组件)从生存到死亡的过程.在Vue的整个生命周期中，它提供了一系列的事件(可以理解为生命周期的各个阶段对应的事件)，可">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Vue中组件之间通信">
-<meta property="og:url" content="http://yoursite.com/2017/05/05/vue/组件间通信/index.html">
+<meta property="og:title" content="Vue的生命周期(钩子函数)">
+<meta property="og:url" content="http://yoursite.com/2017/05/08/vue/生命周期/index.html">
 <meta property="og:site_name" content="loriWang`s Blog">
-<meta property="og:description" content="最近在学习vue,涉及到一个父子组件通信,觉得有必要来写下来了解一下
-一.父对子组件的通信1.vue1中父对子组件通信在父组件中使用绑定属性的方式来对子组件推送数据如在父组件中:123456&amp;lt;ratingselect :select-type=&quot;selectType&quot;              :only-content=&quot;onlyContent&quot;              :desc=&quot;f">
-<meta property="og:updated_time" content="2017-05-05T06:50:13.956Z">
+<meta property="og:description" content="一.什么是生命周期我们来了解一下vue中的生命周期(也称钩子函数)什么事生命周期呢,也就是从开始创建、初始化数据、编译模板、挂载Dom、渲染→更新→渲染、卸载等一系列过程，我们称这是Vue的生命周期。通俗说就是Vue实例从创建到销毁的过程，就是生命周期。换个方式来说就是vue实例(组件)从生存到死亡的过程.在Vue的整个生命周期中，它提供了一系列的事件(可以理解为生命周期的各个阶段对应的事件)，可">
+<meta property="og:image" content="http://v1-cn.vuejs.org/images/lifecycle.png">
+<meta property="og:updated_time" content="2017-05-08T05:33:24.897Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Vue中组件之间通信">
-<meta name="twitter:description" content="最近在学习vue,涉及到一个父子组件通信,觉得有必要来写下来了解一下
-一.父对子组件的通信1.vue1中父对子组件通信在父组件中使用绑定属性的方式来对子组件推送数据如在父组件中:123456&amp;lt;ratingselect :select-type=&quot;selectType&quot;              :only-content=&quot;onlyContent&quot;              :desc=&quot;f">
+<meta name="twitter:title" content="Vue的生命周期(钩子函数)">
+<meta name="twitter:description" content="一.什么是生命周期我们来了解一下vue中的生命周期(也称钩子函数)什么事生命周期呢,也就是从开始创建、初始化数据、编译模板、挂载Dom、渲染→更新→渲染、卸载等一系列过程，我们称这是Vue的生命周期。通俗说就是Vue实例从创建到销毁的过程，就是生命周期。换个方式来说就是vue实例(组件)从生存到死亡的过程.在Vue的整个生命周期中，它提供了一系列的事件(可以理解为生命周期的各个阶段对应的事件)，可">
+<meta name="twitter:image" content="http://v1-cn.vuejs.org/images/lifecycle.png">
 
 
 
@@ -127,13 +126,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/05/05/vue/组件间通信/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/05/08/vue/生命周期/"/>
 
 
 
 
 
-  <title> Vue中组件之间通信 | loriWang`s Blog </title>
+  <title> Vue的生命周期(钩子函数) | loriWang`s Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -262,7 +261,7 @@
   
 
   <article class="post post-type-vue " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/05/vue/组件间通信/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/08/vue/生命周期/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="LoRi.Wang">
@@ -283,7 +282,7 @@
             
             
               
-                Vue中组件之间通信
+                Vue的生命周期(钩子函数)
               
             
           </h1>
@@ -298,8 +297,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-05T13:23:00+08:00">
-                2017-05-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-08T12:53:00+08:00">
+                2017-05-08
               </time>
             
 
@@ -356,13 +355,29 @@
       
 
       
-        <p>最近在学习vue,涉及到一个父子组件通信,觉得有必要来写下来了解一下</p>
-<h2 id="一-父对子组件的通信"><a href="#一-父对子组件的通信" class="headerlink" title="一.父对子组件的通信"></a>一.父对子组件的通信</h2><h4 id="1-vue1中父对子组件通信"><a href="#1-vue1中父对子组件通信" class="headerlink" title="1.vue1中父对子组件通信"></a>1.vue1中父对子组件通信</h4><p>在父组件中使用绑定属性的方式来对子组件推送数据<br><br>如在父组件中:<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">ratingselect</span> <span class="attr">:select-type</span>=<span class="string">"selectType"</span></span></div><div class="line">              <span class="attr">:only-content</span>=<span class="string">"onlyContent"</span></div><div class="line">              <span class="attr">:desc</span>=<span class="string">"food.desc"</span></div><div class="line">              <span class="attr">:ratings</span>=<span class="string">"food.ratings"</span>&gt;</div><div class="line">  </div><div class="line"><span class="tag">&lt;/<span class="name">ratingselect</span>&gt;</span></div></pre></td></tr></table></figure></p>
-<p>在这我们为ratingselect组件通知了四个属性,通过绑定属性的方式<code>select-type</code>是子组件得到的key,但是在子组件中<br>得到的属性是驼峰方式的写法也就是父组件中通知的是<code>select-type</code>、<code>only-content</code>、<code>desc</code>、<code>ratings</code>,子组件得到的是<code>selectType</code>、<code>onlyContent</code>、<code>desc</code>、<code>ratings</code><br><br>在子组件中是在props中得到父组件穿回来的信息<br>如在<code>ratingselect</code>组件中<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</div><div class="line">        <span class="attr">props</span>: &#123;</div><div class="line">            <span class="attr">ratings</span>: &#123;</div><div class="line">                <span class="attr">type</span>: <span class="built_in">Array</span>,</div><div class="line">              <span class="keyword">default</span>() &#123;</div><div class="line">                    <span class="keyword">return</span> [];</div><div class="line">              &#125;</div><div class="line">            &#125;,</div><div class="line">          <span class="attr">selectType</span>: &#123;</div><div class="line">            <span class="attr">type</span>: <span class="built_in">Number</span>,</div><div class="line">            <span class="attr">default</span>: ALL</div><div class="line">          &#125;,</div><div class="line">          <span class="attr">onlyContent</span>: &#123;</div><div class="line">            <span class="attr">type</span>: <span class="built_in">Boolean</span>,</div><div class="line">            <span class="attr">default</span>: <span class="literal">false</span></div><div class="line">          &#125;,</div><div class="line">          <span class="attr">desc</span>: &#123;</div><div class="line">            <span class="attr">type</span>: <span class="built_in">Object</span>,</div><div class="line">            <span class="keyword">default</span>() &#123;</div><div class="line">              <span class="keyword">return</span> &#123;</div><div class="line">                <span class="attr">all</span>: <span class="string">'全部'</span>,</div><div class="line">                <span class="attr">positive</span>: <span class="string">'满意'</span>,</div><div class="line">                <span class="attr">negative</span>: <span class="string">'吐槽'</span></div><div class="line">              &#125;;</div><div class="line">            &#125;</div><div class="line">          &#125;</div><div class="line">        &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>此时在这里<code>type</code>是我们要接受的数据类型,<code>default</code>是当没有数据来传送的时候默认的值.<br><br>如<code>ratings</code>假如没传的时候会默认为空数组,其他也是类似.<br></p>
-<h2 id="二-子组件向父组件传值"><a href="#二-子组件向父组件传值" class="headerlink" title="二.子组件向父组件传值"></a>二.子组件向父组件传值</h2><h4 id="1-vue1中子组件向父组件传值"><a href="#1-vue1中子组件向父组件传值" class="headerlink" title="1.vue1中子组件向父组件传值"></a>1.vue1中子组件向父组件传值</h4><p>在子组件中通过<code>$dispatch</code>方法派发事件<br>如在<code>ratingselect</code>组件中<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">methods: &#123;</div><div class="line">          toggleContent(event)&#123;</div><div class="line">            <span class="keyword">this</span>.onlyContent = !<span class="keyword">this</span>.onlyContent;</div><div class="line">            <span class="keyword">this</span>.$dispatch(<span class="string">'content.toggle'</span>, <span class="keyword">this</span>.onlyContent);</div><div class="line">          &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>如上,我们注册了个toggleContent事件,这个事件每次点击的时候会把onlyContent取反,然后在吧值派发到父组件中<br><br>在父组件中,我们在<code>events</code>中得到子组件派发的事件<br><br>如:<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">events: &#123;</div><div class="line">  <span class="string">'content.toggle'</span>(onlyContent) &#123;</div><div class="line">      <span class="keyword">this</span>.onlyContent = onlyContent;</div><div class="line">    <span class="keyword">this</span>.$nextTick(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</div><div class="line">      <span class="keyword">this</span>.scroll.refresh();</div><div class="line">    &#125;);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>如上:这里我们就接收到了子组件派发的事件<code>content.toggle</code>,括号中的<code>onlyContent</code>使我们子组件中传回来的值,函数内部则是这个事件触发之后我们要处理的事情<br></p>
+        <h2 id="一-什么是生命周期"><a href="#一-什么是生命周期" class="headerlink" title="一.什么是生命周期"></a>一.什么是生命周期</h2><p>我们来了解一下vue中的生命周期(也称钩子函数)<br><br>什么事生命周期呢,也就是从开始创建、初始化数据、编译模板、挂载Dom、渲染→更新→渲染、卸载等一系列过程，我们称这是Vue的生命周期。通俗说就是Vue实例从创建到销毁的过程，就是生命周期。<br><br>换个方式来说就是vue实例(组件)从生存到死亡的过程.<br>在Vue的整个生命周期中，它提供了一系列的事件(可以理解为生命周期的各个阶段对应的事件)，可以让我们注册js方法，可以让我们达到控制整个过程的目的.<br>为了方便大家理解,vue官方给出了一个图(vue1,图片打开可能有点慢),vue1和2部分会有区别<br><img src="http://v1-cn.vuejs.org/images/lifecycle.png" alt="&#39;图片&#39; &#39;图片"></p>
+<h2 id="二-钩子函数-vue1"><a href="#二-钩子函数-vue1" class="headerlink" title="二.钩子函数(vue1)"></a>二.钩子函数(vue1)</h2><h4 id="init"><a href="#init" class="headerlink" title="init"></a>init</h4><ul>
+<li>类型: <code>Function</code></li>
+<li>详细:<br><br>在实例开始初始化时同步调用。此时数据观测、事件和 watcher 都尚未初始化。<h4 id="created"><a href="#created" class="headerlink" title="created"></a>created</h4></li>
+<li>类型: <code>Function</code></li>
+<li>详细:<br><br>在实例创建之后同步调用。此时实例已经结束解析选项，这意味着已建立：数据绑定，计算属性，方法，watcher/事件回调。但是还没有开始 DOM 编译，$el 还不存在。<h4 id="beforeCompile"><a href="#beforeCompile" class="headerlink" title="beforeCompile"></a>beforeCompile</h4></li>
+<li>类型: <code>Function</code></li>
+<li>详细:<br><br>在编译开始前调用。<h4 id="compiled"><a href="#compiled" class="headerlink" title="compiled"></a>compiled</h4></li>
+<li>类型: <code>Function</code></li>
+<li>详细:<br><br>在编译结束后调用。此时所有的指令已生效，因而数据的变化将触发 DOM 更新。但是不担保 $el 已插入文档。<h4 id="ready"><a href="#ready" class="headerlink" title="ready"></a>ready</h4></li>
+<li>类型: <code>Function</code></li>
+<li>详细:<br><br>在编译结束和 $el 第一次插入文档之后调用，如在第一次 attached 钩子之后调用。注意必须是由 Vue 插入（如 vm.$appendTo() 等方法或指令更新）才触发 ready 钩子。<br>另见： 生命周期图示<h4 id="attached"><a href="#attached" class="headerlink" title="attached"></a>attached</h4></li>
+<li>类型: <code>Function</code></li>
+<li>详细:<br><br>在 vm.$el 插入 DOM 时调用。必须是由指令或实例方法（如 $appendTo()）插入，直接操作 vm.$el 不会 触发这个钩子。<h4 id="detached"><a href="#detached" class="headerlink" title="detached"></a>detached</h4></li>
+<li>类型: <code>Function</code></li>
+<li>详细:<br><br>在 vm.$el 从 DOM 中删除时调用。必须是由指令或实例方法删除，直接操作 vm.$el 不会 触发这个钩子。<h4 id="beforeDestroy"><a href="#beforeDestroy" class="headerlink" title="beforeDestroy"></a>beforeDestroy</h4></li>
+<li>类型: <code>Function</code></li>
+<li>详细:<br><br>在开始销毁实例时调用。此时实例仍然有功能。<br>另见： 生命周期图示<h4 id="destroyed"><a href="#destroyed" class="headerlink" title="destroyed"></a>destroyed</h4></li>
+<li>类型: <code>Function</code></li>
+<li>详细:<br><br>在实例被销毁之后调用。此时所有的绑定和实例的指令已经解绑，所有的子实例也已经被销毁。<br>如果有离开过渡，destroyed 钩子在过渡完成之后调用。<h2 id="三-使用方法"><a href="#三-使用方法" class="headerlink" title="三.使用方法"></a>三.使用方法</h2>在组件<code>export default{}</code>中写入对应的方法如:<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">export</span> <span class="keyword">default</span>&#123;</div><div class="line">    <span class="attr">props</span>: &#123;</div><div class="line">        </div><div class="line">    &#125;,</div><div class="line">    data() &#123;</div><div class="line">        <span class="keyword">return</span> &#123;</div><div class="line">            </div><div class="line">        &#125;</div><div class="line">    &#125;,</div><div class="line">    created() &#123;</div><div class="line">        <span class="comment">//对应的处理函数或者属性</span></div><div class="line">      <span class="keyword">this</span>.classMap = [<span class="string">'decrease'</span>, <span class="string">'discount'</span>, <span class="string">'special'</span>, <span class="string">'invoice'</span>, <span class="string">'guarantee'</span>];</div><div class="line">    &#125;,</div><div class="line">    compiled() &#123;</div><div class="line">      <span class="keyword">this</span>.$nextTick(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</div><div class="line">        <span class="comment">// 这个判断语句是为了防止多次打开时 没有进行滚动</span></div><div class="line">        <span class="keyword">this</span>.scroll = <span class="keyword">new</span> BScroll(<span class="keyword">this</span>.$els.sellerWrapper, &#123;</div><div class="line">          <span class="attr">click</span>: <span class="literal">true</span></div><div class="line">        &#125;);</div><div class="line">      &#125;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>注意一下层级关系,和你要挂载的事件所对应的生命周期的位置<br>另见： 生命周期图示</p>
 <p align="right">—by  lori.Wang</p>
       
     </div>
@@ -399,8 +414,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/05/02/Interview Questions/base1/" rel="next" title="前端面试题基础(一)">
-                <i class="fa fa-chevron-left"></i> 前端面试题基础(一)
+              <a href="/2017/05/05/js/requirejs/" rel="next" title="AMD的requireJs(一)">
+                <i class="fa fa-chevron-left"></i> AMD的requireJs(一)
               </a>
             
           </div>
@@ -408,10 +423,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/05/05/js/requirejs/" rel="prev" title="AMD的requireJs(一)">
-                AMD的requireJs(一) <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -540,7 +551,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-父对子组件的通信"><span class="nav-number">1.</span> <span class="nav-text">一.父对子组件的通信</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-vue1中父对子组件通信"><span class="nav-number">1.0.1.</span> <span class="nav-text">1.vue1中父对子组件通信</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-子组件向父组件传值"><span class="nav-number">2.</span> <span class="nav-text">二.子组件向父组件传值</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-vue1中子组件向父组件传值"><span class="nav-number">2.0.1.</span> <span class="nav-text">1.vue1中子组件向父组件传值</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-什么是生命周期"><span class="nav-number">1.</span> <span class="nav-text">一.什么是生命周期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-钩子函数-vue1"><span class="nav-number">2.</span> <span class="nav-text">二.钩子函数(vue1)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#init"><span class="nav-number">2.0.1.</span> <span class="nav-text">init</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#created"><span class="nav-number">2.0.2.</span> <span class="nav-text">created</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#beforeCompile"><span class="nav-number">2.0.3.</span> <span class="nav-text">beforeCompile</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#compiled"><span class="nav-number">2.0.4.</span> <span class="nav-text">compiled</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ready"><span class="nav-number">2.0.5.</span> <span class="nav-text">ready</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#attached"><span class="nav-number">2.0.6.</span> <span class="nav-text">attached</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#detached"><span class="nav-number">2.0.7.</span> <span class="nav-text">detached</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#beforeDestroy"><span class="nav-number">2.0.8.</span> <span class="nav-text">beforeDestroy</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#destroyed"><span class="nav-number">2.0.9.</span> <span class="nav-text">destroyed</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-使用方法"><span class="nav-number">3.</span> <span class="nav-text">三.使用方法</span></a></li></ol></div>
             
 
           </div>

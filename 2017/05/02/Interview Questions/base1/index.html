@@ -101,7 +101,7 @@
 常见空元素link,br,meta
 2.常见的浏览器内核及兼容写法
 1.ie浏览">
-<meta property="og:updated_time" content="2017-05-04T03:18:17.577Z">
+<meta property="og:updated_time" content="2017-05-05T13:32:02.727Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="前端面试题基础(一)">
 <meta name="twitter:description" content="1.块级元素,行内元素,空元素常见块级元素div,h1-h6,p,form,ul,ol,li,table,caption,thead,tbody,tfoot,tr,td,dl,dt,hr`
@@ -372,8 +372,10 @@
 <li>1.ie浏览器<br><br>使用的是<code>trident</code>内核</li>
 <li>2.火狐浏览器<br><br>使用的是<code>Gecko</code>内核,兼容写法<code>-moz-</code></li>
 <li>3.谷歌和safari浏览器<br><br>使用的是<code>webkit</code>内核,兼容写法<code>-webkit-</code></li>
-<li><p>4.欧朋浏览器<br>使用的是<code>presto</code>内核,兼容写法<code>-o-</code></p>
-<h2 id="3-怎么理解mvc与mvvm"><a href="#3-怎么理解mvc与mvvm" class="headerlink" title="3.怎么理解mvc与mvvm"></a>3.怎么理解mvc与mvvm</h2><h4 id="mvc"><a href="#mvc" class="headerlink" title="mvc"></a>mvc</h4><p>MVC (Model-View-Controller)<br></p>
+<li>4.欧朋浏览器<br>使用的是<code>presto</code>内核,兼容写法<code>-o-</code><h2 id="3-ie浏览器的hack"><a href="#3-ie浏览器的hack" class="headerlink" title="3.ie浏览器的hack"></a>3.ie浏览器的hack</h2><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">.bb&#123;</div><div class="line">   background-color:#f1ee18;/*所有识别*/</div><div class="line">  .background-color:#00deff\9; /*IE6、7、8识别*/</div><div class="line">  +background-color:#a200ff;/*IE6、7识别*/</div><div class="line">  _background-color:#1e0bd1;/*IE6识别*/ </div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="4-怎么理解mvc与mvvm"><a href="#4-怎么理解mvc与mvvm" class="headerlink" title="4.怎么理解mvc与mvvm"></a>4.怎么理解mvc与mvvm</h2><h4 id="mvc"><a href="#mvc" class="headerlink" title="mvc"></a>mvc</h4><p> MVC (Model-View-Controller)<br></p>
 <ul>
 <li>视图（View）：用户界面。</li>
 <li>控制器（Controller）：业务逻辑</li>
@@ -382,12 +384,14 @@
 <ul>
 <li>view 传送指令到 Controller</li>
 <li>Controller 完成业务逻辑后，要求 Model 改变状态</li>
-<li>Model 将新的数据发送到 View，用户得到反馈<br></li>
-</ul>
+<li><p>Model 将新的数据发送到 View，用户得到反馈<br></p>
 <p>MVC是将Model, View和Controller分离，让彼此的职责(responsibility)能够明确的分开<br><br>这样不论是改M, V还是C，都可以确保另外两层可不用做任何修改，同时这样的分层也可以加强程式的可测试性(testability)<br><br>View和Model基本上是相关的，但它们并不会有直接的相依关系，而是由Controller去决定Model产生的资料，然后丢给View去做呈现<br><br>Controller是Model和View之间的协调者(coordinator)，View和Model不能直接沟通，以确保责任的分离。而Controller可以只是一个系结Model和View的小类别，也可以是大到包含Workflow, Enterprise Services或是做为外部系统的Proxy Services等的逻辑系统，MVC各元件是可以分离的组件，也可以是分离的系统(当然要设计一些机制在相互沟通)</p>
 <h4 id="mvvm"><a href="#mvvm" class="headerlink" title="mvvm"></a>mvvm</h4><p>MVVM (Model-View-ViewModel)<br><br>MVVM的架构一样是M, V分离，但中间是以VM (ViewModel)来串接<br><br>这个ViewModel比较像是View的一个代理程式，它负责直接对Model做沟通，而View可以透过一些机制(ex: Events, Two-way Databindings, …)来和ViewModel沟通以取得资料或将资料抛给Model做存取等工作，ViewModel也可以作为和外部系统的代理程式<br><br>不过它和MVC不同的地方，就是ViewModel和View的黏合度比较高，因为View必须要透过ViewModel才可以取得Model,而ViewModel又必须要处理来自View的通知讯息，所以虽然职责一样分明，但是却不像MVC那样可以扩展到整个系统元件都能用。<br></p>
+<h2 id="5-两种事件问题"><a href="#5-两种事件问题" class="headerlink" title="5.两种事件问题"></a>5.两种事件问题</h2><p>直接在元素上写事件如</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onclick</span>=<span class="string">'tan()'</span>&gt;</span><span class="tag">&lt;<span class="name">button</span>&gt;</span></div></pre></td></tr></table></figure>
 </li>
 </ul>
+<p>和在js中获得元素再绑定事件有什么区别<br>答:<br><br>在元素上写事件是HTML事件处理程序<br><br>另外的是DOM事件处理程序</p>
 <p align="right">—by  lori.Wang</p>
       
     </div>
@@ -508,7 +512,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">17</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -519,7 +523,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -565,7 +569,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-块级元素-行内元素-空元素"><span class="nav-number">1.</span> <span class="nav-text">1.块级元素,行内元素,空元素</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#常见块级元素"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">常见块级元素</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#常见行内元素-内联元素"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">常见行内元素(内联元素)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#常见空元素"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">常见空元素</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-常见的浏览器内核及兼容写法"><span class="nav-number">2.</span> <span class="nav-text">2.常见的浏览器内核及兼容写法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-怎么理解mvc与mvvm"><span class="nav-number">3.</span> <span class="nav-text">3.怎么理解mvc与mvvm</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#mvc"><span class="nav-number">3.0.1.</span> <span class="nav-text">mvc</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mvvm"><span class="nav-number">3.0.2.</span> <span class="nav-text">mvvm</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-块级元素-行内元素-空元素"><span class="nav-number">1.</span> <span class="nav-text">1.块级元素,行内元素,空元素</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#常见块级元素"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">常见块级元素</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#常见行内元素-内联元素"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">常见行内元素(内联元素)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#常见空元素"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">常见空元素</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-常见的浏览器内核及兼容写法"><span class="nav-number">2.</span> <span class="nav-text">2.常见的浏览器内核及兼容写法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-ie浏览器的hack"><span class="nav-number">3.</span> <span class="nav-text">3.ie浏览器的hack</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-怎么理解mvc与mvvm"><span class="nav-number">4.</span> <span class="nav-text">4.怎么理解mvc与mvvm</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#mvc"><span class="nav-number">4.0.1.</span> <span class="nav-text">mvc</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mvvm"><span class="nav-number">4.0.2.</span> <span class="nav-text">mvvm</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-两种事件问题"><span class="nav-number">5.</span> <span class="nav-text">5.两种事件问题</span></a></li></ol></div>
             
 
           </div>
