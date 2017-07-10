@@ -1,0 +1,744 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="angular," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="背景新入职接手一个快上线的项目,最近一直在看项目的源代码,使用的是angular1的代码,其中自定义指令用的不能用很多来形容,所以感觉之前angular学的简直是个渣,所以开始更新一下angular中碰到的难点 自定义指令(directive)中的scopescoope的三种取值1.false()默认值,直接使用父scope,比较危险.简单的来说就是指令内部没有一个新的scope,它和指令以外的代">
+<meta name="keywords" content="angular">
+<meta property="og:type" content="article">
+<meta property="og:title" content="angular自定义指令1">
+<meta property="og:url" content="http://yoursite.com/2017/07/10/angular/angular-directive1/index.html">
+<meta property="og:site_name" content="loriWang`s Blog">
+<meta property="og:description" content="背景新入职接手一个快上线的项目,最近一直在看项目的源代码,使用的是angular1的代码,其中自定义指令用的不能用很多来形容,所以感觉之前angular学的简直是个渣,所以开始更新一下angular中碰到的难点 自定义指令(directive)中的scopescoope的三种取值1.false()默认值,直接使用父scope,比较危险.简单的来说就是指令内部没有一个新的scope,它和指令以外的代">
+<meta property="og:image" content="http://img.blog.csdn.net/20160815172838043">
+<meta property="og:image" content="http://img.blog.csdn.net/20160815171137022">
+<meta property="og:image" content="http://img.blog.csdn.net/20160815171730353">
+<meta property="og:updated_time" content="2017-07-10T11:08:55.099Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="angular自定义指令1">
+<meta name="twitter:description" content="背景新入职接手一个快上线的项目,最近一直在看项目的源代码,使用的是angular1的代码,其中自定义指令用的不能用很多来形容,所以感觉之前angular学的简直是个渣,所以开始更新一下angular中碰到的难点 自定义指令(directive)中的scopescoope的三种取值1.false()默认值,直接使用父scope,比较危险.简单的来说就是指令内部没有一个新的scope,它和指令以外的代">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20160815172838043">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/07/10/angular/angular-directive1/"/>
+
+
+
+
+
+  <title> angular自定义指令1 | loriWang`s Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">loriWang`s Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一步一步前行</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/10/angular/angular-directive1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="LoRi.Wang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="loriWang`s Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                angular自定义指令1
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-10T21:52:00+08:00">
+                2017-07-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/angular/" itemprop="url" rel="index">
+                    <span itemprop="name">angular</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>新入职接手一个快上线的项目,最近一直在看项目的源代码,使用的是angular1的代码,其中自定义指令用的不能用很多来形容,所以感觉之前angular学的简直是个渣,所以开始更新一下angular中碰到的难点</p>
+<h2 id="自定义指令-directive-中的scope"><a href="#自定义指令-directive-中的scope" class="headerlink" title="自定义指令(directive)中的scope"></a>自定义指令(<code>directive</code>)中的<code>scope</code></h2><h3 id="scoope的三种取值"><a href="#scoope的三种取值" class="headerlink" title="scoope的三种取值"></a>scoope的三种取值</h3><h4 id="1-false-默认值-直接使用父scope-比较危险"><a href="#1-false-默认值-直接使用父scope-比较危险" class="headerlink" title="1.false()默认值,直接使用父scope,比较危险."></a>1.false()默认值,直接使用父<code>scope</code>,比较危险.</h4><p>简单的来说就是指令内部没有一个新的<code>scope</code>,它和指令以外的代码共享同一个<code>scope</code>,即修改父<code>scope</code>会修改子<code>scope</code>,修改子<code>scope</code>会影响父<code>scooe</code>,</p>
+<h4 id="2-true-继承父scope"><a href="#2-true-继承父scope" class="headerlink" title="2.true:继承父scope"></a>2.true:继承父<code>scope</code></h4><p>即修改父类<code>scope</code>不会改变子<code>scope</code>的值,而修改子<code>scope</code>的值则会影响父<code>scope</code>的值.<br>一开始是绑定在父scope中，但当修改位于自定义指令中的输入框时，子scope就被创建并继承父scope了。之后，修改父scope并不能影响input的值，而修改子scope就可以改变input的值了<br><img src="http://img.blog.csdn.net/20160815172838043" alt="&#39;图片&#39; &#39;图片&#39;"></p>
+<h4 id="3-穿件一个新的’隔离’scope-但是仍然可以与scope通信"><a href="#3-穿件一个新的’隔离’scope-但是仍然可以与scope通信" class="headerlink" title="3.{};穿件一个新的’隔离’scope,但是仍然可以与scope通信;"></a>3.{};穿件一个新的’隔离’<code>scope</code>,但是仍然可以与<code>scope</code>通信;</h4><p>隔离的<code>scope</code>,通常用来创建可服用的指令,也就是不用管父<code>scope</code>绑定的东西,然而虽然说是“隔离”，但通常我们还是需要让这个子scope跟父scope中的变量进行绑定。绑定的策略有3种：</p>
+<ul>
+<li>@：单向绑定，外部scope能够影响内部scope，但反过来不成立</li>
+<li>=：双向绑定，外部scope和内部scope的model能够相互改变</li>
+<li>&amp;：把内部scope的函数的返回值和外部scope的任何属性绑定起来<h5 id="1-单向绑定"><a href="#1-单向绑定" class="headerlink" title="1.@单向绑定"></a>1.@单向绑定</h5></li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">"en"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"UTF-8"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>angular directive demo1<span class="tag">&lt;/<span class="name">title</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"../js/angular.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="xml"></span></div><div class="line">        var app = angular.module('ngAppDemo',[]);</div><div class="line">        app.directive('myDirective',function ($timeout) &#123;</div><div class="line">           return&#123;</div><div class="line">               restrict: 'E',</div><div class="line">               scope: &#123;</div><div class="line">                   // @ 单向绑定 myText 是指在属性(my-text)里面绑定的东西</div><div class="line">                   )</div><div class="line">                   myText:'@'</div><div class="line">               &#125;,</div><div class="line">               replace: true,</div><div class="line">            template:`<span class="tag">&lt;<span class="name">p</span>&gt;</span>自定义指令scope:<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">ng-model</span>=<span class="string">"myText"</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span>`,</div><div class="line">               controller:null</div><div class="line">           &#125;</div><div class="line">        &#125;);</div><div class="line">        app.controller('ngAppDemoController', function($scope) &#123;</div><div class="line">        &#125;)</div><div class="line"></div><div class="line">    <span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">ng-app</span>=<span class="string">"ngAppDemo"</span> <span class="attr">ng-controller</span>=<span class="string">"ngAppDemoController"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>父scope:<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">ng-model</span>=<span class="string">"input"</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">my-directive</span> <span class="attr">my-text</span>=<span class="string">"&#123;&#123;input&#125;&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">my-directive</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></div></pre></td></tr></table></figure>
+<p><img src="http://img.blog.csdn.net/20160815171137022" alt="&#39;图片&#39; &#39;图片&#39;"><br>我们可以看到,在父元素修改的时候 可以改变子<code>scope</code>的值,子<code>scope</code>改变的时候父<code>scope</code>不会发生改变.</p>
+<h5 id="2-双向绑定"><a href="#2-双向绑定" class="headerlink" title="2.=双向绑定"></a>2.=双向绑定</h5><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">"en"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"UTF-8"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>angular directive demo1<span class="tag">&lt;/<span class="name">title</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"../js/angular.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="xml"></span></div><div class="line">        var app = angular.module('ngAppDemo',[]);</div><div class="line">        app.directive('myDirective',function ($timeout) &#123;</div><div class="line">           return&#123;</div><div class="line">               restrict: 'E',</div><div class="line">               scope: &#123;</div><div class="line">                   //@ 单向绑定</div><div class="line">                   myText:'='</div><div class="line">               &#125;,</div><div class="line">               replace: true,</div><div class="line">               template:`<span class="tag">&lt;<span class="name">p</span>&gt;</span>自定义指令scope:<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">ng-model</span>=<span class="string">"myText"</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span>`,</div><div class="line">               controller:null</div><div class="line">           &#125;</div><div class="line">        &#125;);</div><div class="line">        app.controller('ngAppDemoController', function($scope) &#123;</div><div class="line">        &#125;)</div><div class="line"></div><div class="line">    <span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">ng-app</span>=<span class="string">"ngAppDemo"</span> <span class="attr">ng-controller</span>=<span class="string">"ngAppDemoController"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>父scope:<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">ng-model</span>=<span class="string">"input"</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">my-directive</span> <span class="attr">my-text</span>=<span class="string">"input"</span>&gt;</span><span class="tag">&lt;/<span class="name">my-directive</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>注意:<br><br>在元素中使用属性，好比这样<div my-directive="" age="age"></div>,注意，数据的双向绑定要通过=前缀标识符实现，所以不可以使用<code>\{\{\}\}</code>。<br><img src="http://img.blog.csdn.net/20160815171730353" alt="&#39;图片&#39; &#39;图片&#39;"></p>
+<h5 id="3-amp-内部scope的函数返回值和外部scope绑定"><a href="#3-amp-内部scope的函数返回值和外部scope绑定" class="headerlink" title="3.&amp;内部scope的函数返回值和外部scope绑定"></a>3.&amp;内部scope的函数返回值和外部scope绑定</h5><p>这是一个绑定<code>函数方法</code>的前缀标识符<br><br>使用方法：在元素中使用属性，好比这样<code>&lt;div my-directive change-my-age=&quot;changeAge()&quot;&gt;&lt;/div&gt;</code>，注意，属性的名字要用-将多个个单词连接。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">scope: &#123;</div><div class="line">    <span class="attr">changeAge</span>: <span class="string">'&amp;changeMyAge'</span> </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>注意:此处<code>&amp;changeMyAge</code>后面的<code>changeMyAge</code>是在指令上的(<code>change-my-age</code>),然后前面的<code>changeAge</code>是我们命名的名字,这是当自定义指令上绑定多个指令的时候为了区分绑定的东西的不同</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/angular/" rel="tag"># angular</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/09/others/webstorm1/" rel="next" title="webstrom 热加载问题">
+                <i class="fa fa-chevron-left"></i> webstrom 热加载问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/10/angular/angular-translate1/" rel="prev" title="angular国际化">
+                angular国际化 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="LoRi.Wang" />
+          <p class="site-author-name" itemprop="name">LoRi.Wang</p>
+           
+              <p class="site-description motion-element" itemprop="description">一步一步前行</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/">
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自定义指令-directive-中的scope"><span class="nav-number">2.</span> <span class="nav-text">自定义指令(directive)中的scope</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#scoope的三种取值"><span class="nav-number">2.1.</span> <span class="nav-text">scoope的三种取值</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-false-默认值-直接使用父scope-比较危险"><span class="nav-number">2.1.1.</span> <span class="nav-text">1.false()默认值,直接使用父scope,比较危险.</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-true-继承父scope"><span class="nav-number">2.1.2.</span> <span class="nav-text">2.true:继承父scope</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-穿件一个新的’隔离’scope-但是仍然可以与scope通信"><span class="nav-number">2.1.3.</span> <span class="nav-text">3.{};穿件一个新的’隔离’scope,但是仍然可以与scope通信;</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-单向绑定"><span class="nav-number">2.1.3.1.</span> <span class="nav-text">1.@单向绑定</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-双向绑定"><span class="nav-number">2.1.3.2.</span> <span class="nav-text">2.=双向绑定</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-amp-内部scope的函数返回值和外部scope绑定"><span class="nav-number">2.1.3.3.</span> <span class="nav-text">3.&内部scope的函数返回值和外部scope绑定</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LoRi.Wang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
