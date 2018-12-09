@@ -28,3 +28,4 @@ propertiesObject 可选，添加到新建对象的属性（不是原型链的属
 ```
 
 所以我们可以理解为 `{}`相当于`Object.create(Object.ptototype)`
+
