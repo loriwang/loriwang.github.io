@@ -1,0 +1,739 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0">
+
+
+
+
+
+
+<meta name="description" content="我们在写js的时候,可能有些通用的模块需要单独拎出来,这个时候我们如果不进行通用模块的配置的话,可能就会出现重复打包的事情,增大文件的体积,因为自己目前使用的webpack4.x的版本,所以目前暂只说明4.x版本的,之后如果用到再会说 4.x以下版本的 配置主要是在 optimization中进行配置,目前的配置为123456789101112131415161718192021222324252">
+<meta property="og:type" content="article">
+<meta property="og:title" content="webpack中通用模块的配置">
+<meta property="og:url" content="http://yoursite.com/2018/09/09/webpack/commonModuleSetting/index.html">
+<meta property="og:site_name" content="loriWang`s Blog">
+<meta property="og:description" content="我们在写js的时候,可能有些通用的模块需要单独拎出来,这个时候我们如果不进行通用模块的配置的话,可能就会出现重复打包的事情,增大文件的体积,因为自己目前使用的webpack4.x的版本,所以目前暂只说明4.x版本的,之后如果用到再会说 4.x以下版本的 配置主要是在 optimization中进行配置,目前的配置为123456789101112131415161718192021222324252">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-03-31T10:42:19.586Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="webpack中通用模块的配置">
+<meta name="twitter:description" content="我们在写js的时候,可能有些通用的模块需要单独拎出来,这个时候我们如果不进行通用模块的配置的话,可能就会出现重复打包的事情,增大文件的体积,因为自己目前使用的webpack4.x的版本,所以目前暂只说明4.x版本的,之后如果用到再会说 4.x以下版本的 配置主要是在 optimization中进行配置,目前的配置为123456789101112131415161718192021222324252">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/09/09/webpack/commonModuleSetting/">
+
+
+
+
+
+  <title> webpack中通用模块的配置 | loriWang`s Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">loriWang`s Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一步一步前行</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-webpack " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/09/webpack/commonModuleSetting/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="LoRi.Wang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="loriWang`s Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                webpack中通用模块的配置
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-09T01:27:00+08:00">
+                2018-09-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/webpack/" itemprop="url" rel="index">
+                    <span itemprop="name">webpack</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><br><br>我们在写js的时候,可能有些通用的模块需要单独拎出来,这个时候我们如果不进行通用模块的配置的话,可能就会出现重复打包的事情,增大文件的体积,<br>因为自己目前使用的<code>webpack4.x</code>的版本,所以目前暂只说明4.x版本的,之后如果用到再会说 4.x以下版本的</p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>主要是在 <code>optimization</code>中进行配置,目前的配置为<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">        entry:&#123;</span><br><span class="line">            index:<span class="string">'./js/index.js'</span>,</span><br><span class="line">            index1:<span class="string">'./js/index1.js'</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">        output:&#123;</span><br><span class="line">            filename:<span class="string">'js/[name].bundle.js'</span>,</span><br><span class="line">            path:path.resolve(__dirname,<span class="string">'dist'</span>),</span><br><span class="line">            <span class="comment">// 公共包会打成 chunk 所以这里是设置公共包的名称的</span></span><br><span class="line">            chunkFilename: <span class="string">"js/[name].chunk.js"</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="comment">// webpack4.x中使用 optimization 进行配置</span></span><br><span class="line">        optimization:&#123;</span><br><span class="line">            <span class="comment">// 设置公共包的部分  splitChunks</span></span><br><span class="line">            splitChunks:&#123;</span><br><span class="line">                <span class="comment">// 设置缓存的chunks</span></span><br><span class="line">                cacheGroups:&#123;</span><br><span class="line">                    <span class="comment">// 打包公共代码</span></span><br><span class="line">                    common: &#123;</span><br><span class="line">                        name: <span class="string">"common-[id]"</span>,</span><br><span class="line">                        chunks: <span class="string">"all"</span>,</span><br><span class="line">                        minSize: <span class="number">1</span>,</span><br><span class="line">                        <span class="comment">// private 是针对于第三方的库 (例如lodash) 通过设置priority设置来让其先被打包提取,最后再提取剩余代码</span></span><br><span class="line">                        priority: <span class="number">0</span></span><br><span class="line">                    &#125;,</span><br><span class="line">                    <span class="comment">// 打包node_modules 中的文件  或者 重复出现的代码</span></span><br><span class="line">                    vendor: &#123;</span><br><span class="line">                        name: <span class="string">"vendor-[id]"</span>,</span><br><span class="line">                        test: <span class="regexp">/[\\/]node_modules[\\/]/</span>,</span><br><span class="line">                        chunks: <span class="string">"all"</span>,</span><br><span class="line">                        priority: <span class="number">10</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        plugins:[</span><br><span class="line">                <span class="keyword">new</span> CleanWebpackPlugin([<span class="string">'dist'</span>]),</span><br><span class="line">                <span class="keyword">new</span> MiniCssExtractPlugin(&#123;</span><br><span class="line">                    filename: <span class="string">"css/[name].css"</span>,</span><br><span class="line">                    <span class="comment">// 公共的css 也会打成chunk包  所以这里也要设置 </span></span><br><span class="line">                    chunkFilename: <span class="string">"css/[name].css"</span></span><br><span class="line">                &#125;),</span><br><span class="line">                 <span class="keyword">new</span> HtmlWebpackPlugin(&#123;</span><br><span class="line">                     filename:<span class="string">'index.html'</span>,</span><br><span class="line">                     title:<span class="string">'this is  index'</span>,</span><br><span class="line">                     <span class="comment">// 这里代表改页面需要引入的js文件  包括 index 与common</span></span><br><span class="line">                     chunks:[<span class="string">'index'</span>,<span class="string">'common'</span>],</span><br><span class="line">                     template:<span class="string">'index.ejs'</span></span><br><span class="line">                 &#125;),</span><br><span class="line">                 <span class="keyword">new</span> HtmlWebpackPlugin(&#123;</span><br><span class="line">                     filename:<span class="string">'index1.html'</span>,</span><br><span class="line">                     title:<span class="string">'this is  index1'</span>,</span><br><span class="line">                     chunks:[<span class="string">'index1'</span>,<span class="string">'common'</span>],</span><br><span class="line">                     template:<span class="string">'index.ejs'</span></span><br><span class="line">                 &#125;)</span><br><span class="line">                ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="splitChunks中配置项"><a href="#splitChunks中配置项" class="headerlink" title="splitChunks中配置项"></a>splitChunks中配置项</h2><ul>
+<li><p>automaticNameDelimiter <code>string</code><br>webpack将使用块的名称和名称生成名称（例如vendors~main.js）。此选项允许您指定用于生成的名称的分隔符。</p>
+</li>
+<li><p>chunks <code>function</code> <code>string</code><br>这表示将选择哪些块进行优化。如果提供一个字符串，可能的值是all，async和initial。</p>
+</li>
+<li><p>maxAsyncRequests <code>number</code><br>按需加载时的最大并行请求数。</p>
+</li>
+<li>maxInitialRequests <code>number</code><br>入口点处的最大并行请求数。</li>
+<li>minChunks <code>number</code><br>分割前必须共享模块的最小块数。</li>
+<li>minSize <code>number</code><br>要生成的块的最小大小（以字节为单位）。</li>
+<li>maxSize <code>number</code><br>maxSizeoptions用于HTTP / 2和长期缓存。它增加了请求数以获得更好的缓存。它还可用于减小文件大小以加快重建速度。</li>
+<li>name  <code>boolean:true</code> <code>function</code> <code>string</code><br>拆分块的名称。提供true将基于块和缓存组密钥自动生成名称。提供字符串或函数将允许您使用自定义名称。如果名称与入口点名称匹配，则将删除入口点。</li>
+</ul>
+<h3 id="cacheGroups中的配置项"><a href="#cacheGroups中的配置项" class="headerlink" title="cacheGroups中的配置项"></a>cacheGroups中的配置项</h3><p>缓存组可以继承和/或覆盖任何选项splitChunks.*; 但是test，priority并且reuseExistingChunk只能在高速缓存组级别配置。要禁用任何默认缓存组，请将其设置为false。</p>
+<ul>
+<li>priority <code>number</code><br>缓存组的优先级<br>模块可以属于多个缓存组。优化将更喜欢具有更高的缓存组priority。默认组的优先级为负，以允许自定义组采用更高的优先级（默认值适用于自定义组）。</li>
+<li>reuseExistingChunk  <code>boolean</code><br>如果当前块包含已从主块拆分的模块，则将重用它而不是生成新的块。这可能会影响块的结果文件名。</li>
+<li>test <code>function</code> <code>RegExp</code> <code>string</code><br>控制此缓存组选择的模块。省略则选择所有模块。</li>
+</ul>
+<p>还有其他的可以观看webpack的官网<a href="https://webpack.js.org/plugins/split-chunks-plugin/#src/components/Sidebar/Sidebar.jsx" target="_blank" rel="noopener">webpack-splitChunksPlugin</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/08/webpack/outputDirSetting/" rel="next" title="webpack中输出目录的设置">
+                <i class="fa fa-chevron-left"></i> webpack中输出目录的设置
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/09/js/Object.create和Null/" rel="prev" title="Object.create(null) 和 {} 的区别">
+                Object.create(null) 和 {} 的区别 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="LoRi.Wang">
+          <p class="site-author-name" itemprop="name">LoRi.Wang</p>
+           
+              <p class="site-description motion-element" itemprop="description">一步一步前行</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">18</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#配置"><span class="nav-number">1.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#splitChunks中配置项"><span class="nav-number">2.</span> <span class="nav-text">splitChunks中配置项</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#cacheGroups中的配置项"><span class="nav-number">2.1.</span> <span class="nav-text">cacheGroups中的配置项</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LoRi.Wang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
