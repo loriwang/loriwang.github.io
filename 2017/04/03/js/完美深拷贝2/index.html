@@ -1,0 +1,765 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="javascript,深拷贝,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0">
+
+
+
+
+
+
+<meta name="description" content="Object.assign的实现一.Object.assign的作用主要是将所有可枚举属性的值从一个或多个源对象复制到目标对象，同时返回目标对象。（来自 MDN）语法如下所示：1Object.assign(target, ...sources) 其中 target 是目标对象，sources 是源对象，可以有多个，返回修改后的目标对象 target。 如果目标对象中的属性具有相同的键，则属性将被源">
+<meta name="keywords" content="javascript,深拷贝">
+<meta property="og:type" content="article">
+<meta property="og:title" content="完美深拷贝的实现(二)">
+<meta property="og:url" content="http://yoursite.com/2017/04/03/js/完美深拷贝2/index.html">
+<meta property="og:site_name" content="loriWang`s Blog">
+<meta property="og:description" content="Object.assign的实现一.Object.assign的作用主要是将所有可枚举属性的值从一个或多个源对象复制到目标对象，同时返回目标对象。（来自 MDN）语法如下所示：1Object.assign(target, ...sources) 其中 target 是目标对象，sources 是源对象，可以有多个，返回修改后的目标对象 target。 如果目标对象中的属性具有相同的键，则属性将被源">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-09-18T09:22:11.888Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="完美深拷贝的实现(二)">
+<meta name="twitter:description" content="Object.assign的实现一.Object.assign的作用主要是将所有可枚举属性的值从一个或多个源对象复制到目标对象，同时返回目标对象。（来自 MDN）语法如下所示：1Object.assign(target, ...sources) 其中 target 是目标对象，sources 是源对象，可以有多个，返回修改后的目标对象 target。 如果目标对象中的属性具有相同的键，则属性将被源">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/04/03/js/完美深拷贝2/">
+
+
+
+
+
+  <title> 完美深拷贝的实现(二) | loriWang`s Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">loriWang`s Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一步一步前行</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/03/js/完美深拷贝2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="LoRi.Wang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="loriWang`s Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                完美深拷贝的实现(二)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-03T21:54:00+08:00">
+                2017-04-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/javascript/" itemprop="url" rel="index">
+                    <span itemprop="name">javascript</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Object-assign的实现"><a href="#Object-assign的实现" class="headerlink" title="Object.assign的实现"></a>Object.assign的实现</h1><h2 id="一-Object-assign的作用"><a href="#一-Object-assign的作用" class="headerlink" title="一.Object.assign的作用"></a>一.Object.assign的作用</h2><p>主要是将所有可枚举属性的值从一个或多个源对象复制到目标对象，同时返回目标对象。（来自 MDN）<br>语法如下所示：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Object</span>.assign(target, ...sources)</span><br></pre></td></tr></table></figure></p>
+<p>其中 <code>target</code> 是目标对象，<code>sources</code> 是源对象，可以有多个，返回修改后的目标对象 <code>target</code>。</p>
+<p>如果目标对象中的属性具有相同的键，则属性将被源对象中的属性<code>覆盖</code>。后来的源对象的属性将类似地覆盖早先的属性。<br><code>String</code> 类型和 <code>Symbol</code> 类型的属性都会被拷贝，而且不会跳过那些值为 <code>null</code> 或 <code>undefined</code> 的源对象。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="keyword">var</span> a = &#123;</span><br><span class="line">    name:<span class="string">'a'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> b =&#123;</span><br><span class="line">    sym:<span class="built_in">Symbol</span>(<span class="number">1</span>),</span><br><span class="line">    un:<span class="literal">undefined</span>,</span><br><span class="line">    nul:<span class="literal">null</span>,</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.assign(a,b));</span><br><span class="line"><span class="comment">// &#123; name: 'a', sym: Symbol(1), un: undefined, nul: null &#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(a)</span><br><span class="line"><span class="comment">//&#123; name: 'a', sym: Symbol(1), un: undefined, nul: null &#125;</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="二-Object-assign-模拟实现思路"><a href="#二-Object-assign-模拟实现思路" class="headerlink" title="二.Object.assign 模拟实现思路"></a>二.Object.assign 模拟实现思路</h2><h3 id="1-assign的不可枚举性"><a href="#1-assign的不可枚举性" class="headerlink" title="1.assign的不可枚举性"></a>1.assign的不可枚举性</h3><p>首先在原生的<code>Object</code>上 <code>assign</code>是不可枚举的</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//assign的不可枚举性</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">var</span> key <span class="keyword">in</span> <span class="built_in">Object</span>) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(key)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//无输出</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.keys(<span class="built_in">Object</span>))</span><br><span class="line"><span class="comment">// [];</span></span><br></pre></td></tr></table></figure>
+<p>我们用其他的方式去查看一下<code>Object.assign</code>是否可枚举<br><code>Object.getOwnPropertyDescriptor</code>,<code>Object.propertyIsEnumerable</code>其中<code>propertyIsEnumerable</code>会检查给定的属性名是否直接存在于对象中（而不是在原型链上)<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.getOwnPropertyDescriptor(<span class="built_in">Object</span>,<span class="string">'assign'</span>))</span><br><span class="line"><span class="comment">// &#123; value: [Function: assign],</span></span><br><span class="line"><span class="comment">//   writable: true,</span></span><br><span class="line"><span class="comment">//   enumerable: false,</span></span><br><span class="line"><span class="comment">//   configurable: true &#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.propertyIsEnumerable(<span class="built_in">Object</span>,<span class="string">'assign'</span>))</span><br><span class="line"><span class="comment">// false</span></span><br></pre></td></tr></table></figure></p>
+<p>说这些说为了说明如果直接挂载到<code>Object</code>上是不对的,那我们来看一下直接挂载到<code>Object</code>上情况;<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Object</span>.assign2 = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'test func'</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.getOwnPropertyDescriptor(<span class="built_in">Object</span>,<span class="string">'assign2'</span>))</span><br><span class="line"><span class="comment">// &#123; value: [Function],</span></span><br><span class="line"><span class="comment">//   writable: true,</span></span><br><span class="line"><span class="comment">//   enumerable: true,</span></span><br><span class="line"><span class="comment">//   configurable: true &#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.propertyIsEnumerable(<span class="built_in">Object</span>,<span class="string">'assign2'</span>))</span><br><span class="line"><span class="comment">// false</span></span><br></pre></td></tr></table></figure></p>
+<p>所以如果需要实现<code>assign</code>的功能 必须通过 <code>Object.defineProperty</code>;</p>
+<h3 id="2-原始类型被包装成对象"><a href="#2-原始类型被包装成对象" class="headerlink" title="2.原始类型被包装成对象"></a>2.原始类型被包装成对象</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="string">'123'</span>,b = <span class="number">1</span>, c = <span class="literal">true</span> ,d = <span class="literal">undefined</span>, e = <span class="literal">null</span>, f = <span class="built_in">Symbol</span>(<span class="number">1</span>);</span><br><span class="line"><span class="keyword">var</span>  obj = <span class="built_in">Object</span>.assign(&#123;&#125;,a,b,c,d,e,f)</span><br><span class="line"><span class="built_in">console</span>.log(obj)</span><br><span class="line"><span class="comment">// &#123; '0': '1', '1': '2', '2': '3' &#125;</span></span><br></pre></td></tr></table></figure>
+<p>我们可以看到 上述代码中  <code>b,c,d,e,f</code>被忽略掉了,原因在于他们没有可枚举属性<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="string">'123'</span>,b = <span class="number">1</span>, c = <span class="literal">true</span> ,d = <span class="literal">undefined</span>, e = <span class="literal">null</span>, f = <span class="built_in">Symbol</span>(<span class="number">1</span>);</span><br><span class="line"><span class="comment">// Object.keys(..) 返回一个数组，包含所有可枚举属性</span></span><br><span class="line"><span class="comment">// 只会查找对象直接包含的属性，不查找[[Prototype]]链</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.keys(a))</span><br><span class="line"><span class="comment">// [ '0', '1', '2' ]</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.keys(b))</span><br><span class="line"><span class="comment">// []</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.keys(c))</span><br><span class="line"><span class="comment">// []</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.keys(d))</span><br><span class="line"><span class="comment">// 报错 TypeError: Cannot convert undefined or null to object</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.keys(e))</span><br><span class="line"><span class="comment">// 报错 TypeError: Cannot convert undefined or null to object</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.keys(f))</span><br><span class="line"><span class="comment">// []</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Object.getOwnPropertyNames(..) 返回一个数组，包含所有属性，无论它们是否可枚举</span></span><br><span class="line"><span class="comment">// 只会查找对象直接包含的属性，不查找[[Prototype]]链</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.getOwnPropertyNames(a))</span><br><span class="line"><span class="comment">// [ '0', '1', '2', 'length' ]</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.getOwnPropertyNames(b))</span><br><span class="line"><span class="comment">// []</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.getOwnPropertyNames(c))</span><br><span class="line"><span class="comment">// []</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.getOwnPropertyNames(d))</span><br><span class="line"><span class="comment">// 报错 TypeError: Cannot convert undefined or null to object</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.getOwnPropertyNames(e))</span><br><span class="line"><span class="comment">// 报错 TypeError: Cannot convert undefined or null to object</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.getOwnPropertyNames(f))</span><br><span class="line"><span class="comment">// []</span></span><br></pre></td></tr></table></figure></p>
+<p>但是下面的代码是可以执行的</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="string">'123'</span>,b = <span class="number">1</span>, c = <span class="literal">true</span> ,d = <span class="literal">undefined</span>, e = <span class="literal">null</span>, f = <span class="built_in">Symbol</span>(<span class="number">1</span>);</span><br><span class="line"><span class="keyword">var</span> test= <span class="string">'test'</span>;</span><br><span class="line"><span class="keyword">var</span> tempObj = &#123;</span><br><span class="line">    a,b,c,d,e,f</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.assign(test,tempObj))</span><br><span class="line"><span class="comment">// &#123; </span></span><br><span class="line"><span class="comment">//   [String: 'abc']</span></span><br><span class="line"><span class="comment">//   v1: 'def',</span></span><br><span class="line"><span class="comment">//   v2: true,</span></span><br><span class="line"><span class="comment">//   v3: 10,</span></span><br><span class="line"><span class="comment">//   v4: Symbol(foo),</span></span><br><span class="line"><span class="comment">//   v5: null,</span></span><br><span class="line"><span class="comment">//   v6: undefined </span></span><br><span class="line"><span class="comment">// &#125;</span></span><br></pre></td></tr></table></figure>
+<p>因为此时的<code>undefined</code> <code>null</code> <code>Symbol</code>是作为属性名存在的,是可以枚举的<br>接上面的代码<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.keys(test));</span><br><span class="line">[ <span class="string">'0'</span>, <span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span> ]</span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.getOwnPropertyNames(test));</span><br><span class="line">[ <span class="string">'0'</span>, <span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'length'</span> ]</span><br></pre></td></tr></table></figure></p>
+<p>那么现在又产生了一个新的问题,如果目标对象是原始类型,会包装成对象,比如上述的代码<code>test</code>就被包装成了<code>[String: &#39;abc&#39;]</code>,解决这个问题也简单,直接使用<code>Object(...)</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> test= <span class="string">'test'</span>;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>(test))</span><br><span class="line"><span class="comment">// [String: 'test']</span></span><br></pre></td></tr></table></figure>
+<h3 id="3-原始类型的的问题"><a href="#3-原始类型的的问题" class="headerlink" title="3.原始类型的的问题"></a>3.原始类型的的问题</h3><p>还有一种情况会出现,就是当我们合并两种相同的数据类型的时候<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="string">'abc'</span></span><br><span class="line"><span class="keyword">var</span> b = <span class="string">'bcd'</span></span><br><span class="line"><span class="keyword">var</span> obj = <span class="built_in">Object</span>.assign(a,b);</span><br><span class="line"><span class="comment">// Cannot assign to read only property '0' of object '[object String]'</span></span><br></pre></td></tr></table></figure></p>
+<p>原因在于我们进行<code>Object(...)</code>的时候其属性<code>writable</code>会设置为<code>false</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="string">'abc'</span></span><br><span class="line"><span class="keyword">var</span> oa = <span class="built_in">Object</span>(a);</span><br><span class="line"><span class="built_in">console</span>.log(oa);</span><br><span class="line"><span class="comment">// [String: 'abc']</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.getOwnPropertyNames(oa));</span><br><span class="line"><span class="comment">// [ '0', '1', '2', 'length' ]</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.getOwnPropertyDescriptor(oa,<span class="string">'0'</span>));</span><br><span class="line"><span class="comment">// &#123; value: 'a',</span></span><br><span class="line"><span class="comment">//   writable: false, // 注意这里已经为false了</span></span><br><span class="line"><span class="comment">//   enumerable: true,</span></span><br><span class="line"><span class="comment">//   configurable: false &#125;</span></span><br></pre></td></tr></table></figure>
+<p>所以这个地方会报失败,但是如果你较真一点你会发现</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="string">'abc'</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.getOwnPropertyDescriptor(a,<span class="string">'0'</span>))</span><br><span class="line"><span class="comment">// &#123; value: 'a',</span></span><br><span class="line"><span class="comment">//   writable: false,  注意这里也为false</span></span><br><span class="line"><span class="comment">//   enumerable: true,</span></span><br><span class="line"><span class="comment">//   configurable: false &#125;</span></span><br></pre></td></tr></table></figure>
+<p>那么同样都为<code>false</code>难道我就不能设置该值了么?<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="string">'abc'</span>;</span><br><span class="line">a[<span class="number">0</span>] = <span class="string">'d'</span></span><br><span class="line"><span class="built_in">console</span>.log(a);</span><br><span class="line"><span class="comment">// abc</span></span><br></pre></td></tr></table></figure></p>
+<p>还真不可以设置,但是你会发现你设置没生效,但是浏览器没报错,那是什么问题呢<br>原因是JS对不可写的属性值的修改静默失败(silently failed),在严格模式下才会提示错误,注意浏览器环境下才会开启严格模式,node环境下是没有作用的<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">'use strict'</span></span><br><span class="line"><span class="keyword">var</span> a = <span class="string">'abc'</span></span><br><span class="line">a[<span class="number">0</span>] = <span class="string">'d'</span></span><br><span class="line"><span class="comment">// Cannot assign to read only property '0' of string 'abc'</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="4-存在性"><a href="#4-存在性" class="headerlink" title="4.存在性"></a>4.存在性</h3><p>如何在不访问属性值的情况下判断对象中是否存在该属性呢<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> anotherObject = &#123;</span><br><span class="line">    a: <span class="number">1</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">var</span> myObj = <span class="built_in">Object</span>.create(anotherObject);</span><br><span class="line">myObj.b = <span class="number">2</span>;</span><br><span class="line"><span class="built_in">console</span>.log(myObj);</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * &#123;</span></span><br><span class="line"><span class="comment"> * b: 2</span></span><br><span class="line"><span class="comment">   __proto__:&#123;a: 1&#125;</span></span><br><span class="line"><span class="comment"> *   &#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="built_in">console</span>.log((<span class="string">`a`</span> <span class="keyword">in</span> myObj));</span><br><span class="line"><span class="comment">//true</span></span><br><span class="line"><span class="built_in">console</span>.log((<span class="string">`b`</span><span class="keyword">in</span> myObj));</span><br><span class="line"><span class="comment">//true</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(myObj.hasOwnProperty(<span class="string">'a'</span>))</span><br><span class="line"><span class="comment">//false</span></span><br><span class="line"><span class="built_in">console</span>.log(myObj.hasOwnProperty(<span class="string">'b'</span>))</span><br><span class="line"><span class="comment">//true</span></span><br></pre></td></tr></table></figure></p>
+<p>通常情况下我们会使用<code>in</code>操作符,但是我们看到了<code>in</code>操作符有一些缺陷作为对比我们使用过了<code>hasOwnProperty</code>,两者有如下区别</p>
+<ul>
+<li>1.<code>in</code>操作符会检查属性是否在对象及<code>[[Prototype]]</code>原型链中</li>
+<li>2<code>hasOwnProperty</code>只会检查是否在对象上,不会检查是否在<code>[[Prototype]]</code>原型链中<br>我们去实现<code>Object.assign(...)</code>的时候肯定不会去拷贝原型链上的属性,所以需要进行过滤一下,但是只进行<code>myObj.hasOwnProperty(...)</code>就可以进行判断了么??<br>我们看一下下面的例子<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> myObj = <span class="built_in">Object</span>.create(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">myObj.b= <span class="string">'b'</span>;</span><br><span class="line"><span class="built_in">console</span>.log(myObj);</span><br><span class="line"><span class="comment">// &#123;b: "b"&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'b'</span> <span class="keyword">in</span> myObj);</span><br><span class="line"><span class="comment">// true</span></span><br><span class="line"><span class="built_in">console</span>.log(myObj.hasOwnProperty(<span class="string">'b'</span>))</span><br><span class="line"><span class="comment">// myObj.hasOwnProperty is not a function</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>会报错,解决方法是使用改变<code>this</code>指向的 <code>call`</code>apply<code></code>bind`;<br>所以最终实现的代码如下</p>
+<h2 id="5-Symbol属性值"><a href="#5-Symbol属性值" class="headerlink" title="5.Symbol属性值"></a>5.Symbol属性值</h2><p>有时候会碰到属性名为<code>Symbol</code>的情况,我们先看一下<code>Objcet.assign</code>是否能够支持</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a =&#123;</span><br><span class="line">    name:<span class="string">'a'</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span>  sym = <span class="built_in">Symbol</span>(<span class="string">'test'</span>);</span><br><span class="line"><span class="keyword">var</span>  b = &#123;</span><br><span class="line">    nameSym:<span class="built_in">Symbol</span>(<span class="string">'b'</span>)</span><br><span class="line">&#125;</span><br><span class="line">b[sym] = <span class="string">'test'</span></span><br><span class="line"><span class="comment">// console.log(Object.getOwnPropertySymbols(b))</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.assign(a,b))</span><br><span class="line"><span class="comment">// &#123; name: 'a', nameSym: Symbol(b), [Symbol(test)]: 'test' &#125;</span></span><br></pre></td></tr></table></figure>
+<p>我们可以看到 <code>Object.assign</code>是正常的,那我们怎么去处理这样的情况呢</p>
+<ul>
+<li>1.<code>Object.getOwnPropertySymbols(...)</code>返回所有<code>Symbol</code>属性名的list</li>
+<li>2.<code>Reflect.ownKeys(...)</code>返回所有属性的list</li>
+</ul>
+<h2 id="三-代码的实现"><a href="#三-代码的实现" class="headerlink" title="三.代码的实现"></a>三.代码的实现</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">typeof</span> <span class="built_in">Object</span>.assign2 !== <span class="string">'function'</span>) &#123;</span><br><span class="line">    <span class="built_in">Object</span>.defineProperty(<span class="built_in">Object</span>,<span class="string">'assign2'</span>, &#123;</span><br><span class="line">        value:<span class="function"><span class="keyword">function</span>(<span class="params">target</span>) </span>&#123;</span><br><span class="line"><span class="meta">            'use strict'</span>;</span><br><span class="line">            <span class="keyword">if</span>(target === <span class="literal">null</span> || target === <span class="literal">undefined</span>) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="built_in">Error</span>(<span class="string">'Cannot convert undefined or null to Object'</span>)</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">var</span> to = <span class="built_in">Object</span>(target);</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">var</span> index = <span class="number">1</span>;index&lt;<span class="built_in">arguments</span>.length;index++) &#123;</span><br><span class="line">                <span class="keyword">var</span>  nextSource = <span class="built_in">arguments</span>[index];</span><br><span class="line">                <span class="keyword">if</span>(nextSource != <span class="literal">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">let</span> sourceKeys = <span class="built_in">Reflect</span>.ownKeys(nextSource);</span><br><span class="line">                    <span class="keyword">for</span> (<span class="keyword">var</span> i <span class="keyword">in</span> sourceKeys) &#123;</span><br><span class="line">                        <span class="keyword">let</span>  key = sourceKeys[i]</span><br><span class="line">                        <span class="keyword">if</span>(<span class="built_in">Object</span>.prototype.hasOwnProperty.call(nextSource,key))&#123;</span><br><span class="line">                            to[key] = nextSource[key]</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> to;</span><br><span class="line">        &#125;,</span><br><span class="line">        writable:<span class="literal">true</span>,</span><br><span class="line">        confiurable:<span class="literal">true</span></span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>进行测试<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a =&#123;</span><br><span class="line">    name:<span class="string">'a'</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span>  sym = <span class="built_in">Symbol</span>(<span class="string">'test'</span>);</span><br><span class="line"><span class="keyword">var</span>  b = &#123;</span><br><span class="line">    nameSym:<span class="built_in">Symbol</span>(<span class="string">'b'</span>)</span><br><span class="line">&#125;</span><br><span class="line">b[sym] = <span class="string">'test'</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.assign2(a,b))</span><br><span class="line"><span class="comment">// &#123;name: "a", nameSym: Symbol(b), Symbol(test): "test"&#125;</span></span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag"># javascript</a>
+          
+            <a href="/tags/深拷贝/" rel="tag"># 深拷贝</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/03/js/闭包/" rel="next" title="闭包(一)">
+                <i class="fa fa-chevron-left"></i> 闭包(一)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/03/js/完美深拷贝1/" rel="prev" title="完美深拷贝的实现(一)">
+                完美深拷贝的实现(一) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="LoRi.Wang">
+          <p class="site-author-name" itemprop="name">LoRi.Wang</p>
+           
+              <p class="site-description motion-element" itemprop="description">一步一步前行</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/">
+                <span class="site-state-item-count">34</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">18</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Object-assign的实现"><span class="nav-number">1.</span> <span class="nav-text">Object.assign的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-Object-assign的作用"><span class="nav-number">1.1.</span> <span class="nav-text">一.Object.assign的作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-Object-assign-模拟实现思路"><span class="nav-number">1.2.</span> <span class="nav-text">二.Object.assign 模拟实现思路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-assign的不可枚举性"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.assign的不可枚举性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-原始类型被包装成对象"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.原始类型被包装成对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-原始类型的的问题"><span class="nav-number">1.2.3.</span> <span class="nav-text">3.原始类型的的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-存在性"><span class="nav-number">1.2.4.</span> <span class="nav-text">4.存在性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Symbol属性值"><span class="nav-number">1.3.</span> <span class="nav-text">5.Symbol属性值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-代码的实现"><span class="nav-number">1.4.</span> <span class="nav-text">三.代码的实现</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LoRi.Wang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
