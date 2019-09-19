@@ -1,0 +1,783 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="javascript,深拷贝,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0">
+
+
+
+
+
+
+<meta name="description" content="深拷贝的实现之前解释了浅拷贝 Object.assign(...) 的实现, 现在我们进入深拷贝的实现, 本次将会介绍 对象 数组 循环引用 引用丢失 Symbol属性 和递归爆栈的情况的处理 第一步: 简单实现深拷贝可以拆分成两部, 即浅拷贝+递归, 浅拷贝判断属性值是否为引用类型, 如果是引用类型就进行递归操作, 否则就直接copy值简单的实现如下 1234567891011121314fun">
+<meta name="keywords" content="javascript,深拷贝">
+<meta property="og:type" content="article">
+<meta property="og:title" content="完美深拷贝的实现(三)">
+<meta property="og:url" content="http://yoursite.com/2019/09/19/js/完美深拷贝3/index.html">
+<meta property="og:site_name" content="loriWang`s Blog">
+<meta property="og:description" content="深拷贝的实现之前解释了浅拷贝 Object.assign(...) 的实现, 现在我们进入深拷贝的实现, 本次将会介绍 对象 数组 循环引用 引用丢失 Symbol属性 和递归爆栈的情况的处理 第一步: 简单实现深拷贝可以拆分成两部, 即浅拷贝+递归, 浅拷贝判断属性值是否为引用类型, 如果是引用类型就进行递归操作, 否则就直接copy值简单的实现如下 1234567891011121314fun">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-09-19T13:01:34.811Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="完美深拷贝的实现(三)">
+<meta name="twitter:description" content="深拷贝的实现之前解释了浅拷贝 Object.assign(...) 的实现, 现在我们进入深拷贝的实现, 本次将会介绍 对象 数组 循环引用 引用丢失 Symbol属性 和递归爆栈的情况的处理 第一步: 简单实现深拷贝可以拆分成两部, 即浅拷贝+递归, 浅拷贝判断属性值是否为引用类型, 如果是引用类型就进行递归操作, 否则就直接copy值简单的实现如下 1234567891011121314fun">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/19/js/完美深拷贝3/">
+
+
+
+
+
+  <title> 完美深拷贝的实现(三) | loriWang`s Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">loriWang`s Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一步一步前行</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/19/js/完美深拷贝3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="LoRi.Wang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="loriWang`s Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                完美深拷贝的实现(三)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-19T15:22:00+08:00">
+                2019-09-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/javascript/" itemprop="url" rel="index">
+                    <span itemprop="name">javascript</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="深拷贝的实现"><a href="#深拷贝的实现" class="headerlink" title="深拷贝的实现"></a>深拷贝的实现</h1><p>之前解释了浅拷贝 <code>Object.assign(...)</code> 的实现, 现在我们进入深拷贝的实现, 本次将会介绍 对象 数组 循环引用 引用丢失 Symbol属性 和递归爆栈的情况的处理</p>
+<h2 id="第一步-简单实现"><a href="#第一步-简单实现" class="headerlink" title="第一步: 简单实现"></a>第一步: 简单实现</h2><p>深拷贝可以拆分成两部, 即浅拷贝+递归, 浅拷贝判断属性值是否为引用类型, 如果是引用类型就进行递归操作, 否则就直接copy值<br>简单的实现如下</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">cloneDeep1</span>(<span class="params">source</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> target = &#123;&#125;;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> key <span class="keyword">in</span> source) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">Object</span>.prototype.hasOwnProperty.call(source, key)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">typeof</span> source[key] === <span class="string">'object'</span>) &#123;</span><br><span class="line">                target[key] = cloneDeep1(source[key]);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                target[key] = source[key];</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> target</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>简单的深拷贝已经实现了, 但是存在以下的几个问题</p>
+<ul>
+<li><ol>
+<li>没有对参数进行校验, 需要校验是否是引用类型 或者null</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>对于是否是引用类型的判断不严谨 , 因为 <code>typeof null === &#39;object</code> </li>
+</ol>
+</li>
+<li><ol start="3">
+<li>没有考虑数组的兼容情况</li>
+</ol>
+</li>
+</ul>
+<h2 id="第二步-拷贝数组"><a href="#第二步-拷贝数组" class="headerlink" title="第二步: 拷贝数组"></a>第二步: 拷贝数组</h2><p>我们对第一步的代码进行优化处理一下上述的三个问题</p>
+<h3 id="1-对象的判断"><a href="#1-对象的判断" class="headerlink" title="1. 对象的判断"></a>1. 对象的判断</h3><p>我们经常可以使用这样的方式来进行判断数据类型是否为对象</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isObject</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Object</span>.prototype.toString.call(obj) === <span class="string">'[object Object]'</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但是在这里并不是太合适, 因为我们需要保留数据类型是数组的情况, 所以我们采用这样的方式来处理</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isObject</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> obj !== <span class="literal">null</span> &amp;&amp; <span class="keyword">typeof</span> obj === <span class="string">'object'</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>所以综合一下上述的代码如下</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isObject</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> obj !== <span class="literal">null</span> &amp;&amp; <span class="keyword">typeof</span> obj === <span class="string">'object'</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">cloneDeep2</span>(<span class="params">source</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!isObject(source)) &#123;</span><br><span class="line">        <span class="keyword">return</span> source <span class="comment">//非对象类型返回自身</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> target = <span class="built_in">Array</span>.isArray(source) ? [] : &#123;&#125;;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> key <span class="keyword">in</span> source) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">Object</span>.prototype.hasOwnProperty.call(source, key)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (isObject(source[key])) &#123; <span class="comment">// 这里增加了类型判断</span></span><br><span class="line">                target[key] = cloneDeep2(source[key]);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                target[key] = source[key];</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> target</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="第三步-循环引用"><a href="#第三步-循环引用" class="headerlink" title="第三步: 循环引用"></a>第三步: 循环引用</h2><p>我们知道 <code>JSON</code> 无法做到循环引用, 遇到这种情况就会报错; </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = &#123;</span><br><span class="line">    name: <span class="string">'a'</span></span><br><span class="line">&#125;</span><br><span class="line">a.c = a;</span><br><span class="line"><span class="comment">//当然我们日常这种情况比较少见 ,但是我们经常多见于这种情况</span></span><br><span class="line"><span class="built_in">JSON</span>.parse(<span class="built_in">JSON</span>.stringify(a))</span><br><span class="line"><span class="comment">//Uncaught TypeError: Converting circular structure to JSON</span></span><br><span class="line"><span class="comment">//    --&gt; starting at object with constructor 'Object'</span></span><br><span class="line"><span class="comment">//    --- property 'c' closes the circle</span></span><br><span class="line"><span class="comment">//   at JSON.stringify (&lt;anonymous&gt;)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//当然我们日常自己引用了自己这种情况比较少见 ,但是我们经常多见于这种情况</span></span><br><span class="line"><span class="keyword">var</span>  a = &#123;</span><br><span class="line">    name:<span class="string">'a'</span>,</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> b = &#123;</span><br><span class="line">    name:<span class="string">'b'</span>,</span><br><span class="line">    value:a</span><br><span class="line">&#125;</span><br><span class="line">a.value = b</span><br></pre></td></tr></table></figure>
+<h3 id="1-使用哈希表"><a href="#1-使用哈希表" class="headerlink" title="1.使用哈希表"></a>1.使用哈希表</h3><p>结局这个问题也很简单,我们建立一个索引用来储存已经拷贝的数组或者对象,当检测到当前数组或者对象在索引中已经存在的时候,取出该值即可,我们看以下代码即可<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isObject</span>(<span class="params">obj</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> obj !== <span class="literal">null</span> &amp;&amp; <span class="keyword">typeof</span> obj === <span class="string">'object'</span>;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">function</span> <span class="title">cloneDeep3</span>(<span class="params">source,hash = new WeakMap(</span>)) </span>&#123;</span><br><span class="line">     <span class="keyword">if</span>(!isObject(source)) &#123;</span><br><span class="line">        <span class="keyword">return</span> source  <span class="comment">//非对象类型返回自身</span></span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">if</span>(hash.get(source)) &#123; <span class="comment">// 查找hash表,已经存在就返回</span></span><br><span class="line">        <span class="keyword">return</span> hash.get(source)</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span>  target =<span class="built_in">Array</span>.isArray(source)?[]:&#123;&#125;;</span><br><span class="line">    hash.set(source,target);<span class="comment">//新增has表</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> key <span class="keyword">in</span>  source)&#123;</span><br><span class="line">        <span class="keyword">if</span>( <span class="built_in">Object</span>.prototype.hasOwnProperty.call(source,key) ) &#123;</span><br><span class="line">            <span class="keyword">if</span>( isObject(source[key]))&#123; <span class="comment">// 这里增加了类型判断</span></span><br><span class="line">                target[key] = cloneDeep3(source[key],hash);</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                target[key] = source[key];</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> target</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们这里使用了 <code>WeakMap</code><br><code>WeakMap</code> 对象是一组键/值对的集合，其中的键是弱引用的。其键必须是 <strong><em>对象</em></strong> ，而值可以是任意的。(来自MDN)<br>简单介绍<br>常用方法</p>
+<ul>
+<li><ol>
+<li><code>WeakMap.prototype.delete(key)</code><br>移除key的关联对象。执行后 WeakMap.prototype.has(key)返回false。</li>
+</ol>
+</li>
+<li><ol start="2">
+<li><code>WeakMap.prototype.get(key)</code><br>返回key关联对象, 或者 undefined(没有key关联对象时)。</li>
+</ol>
+</li>
+<li><ol start="3">
+<li><code>WeakMap.prototype.has(key)</code><br>根据是否有key关联对象返回一个Boolean值。</li>
+</ol>
+</li>
+<li><ol start="4">
+<li><code>WeakMap.prototype.set(key, value)</code><br>在WeakMap中设置一组key关联对象，返回这个 WeakMap对象。</li>
+</ol>
+</li>
+<li><ol start="5">
+<li><code>WeakMap.prototype.clear()</code><br>从WeakMap中移除所有的 key/value 。 注意，该方法已弃用,但可以通过创建一个空的WeakMap并替换原对象来实现 (参看 WeakMap的后半部分)</li>
+</ol>
+</li>
+</ul>
+<h3 id="2-使用数组保存"><a href="#2-使用数组保存" class="headerlink" title="2.使用数组保存"></a>2.使用数组保存</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isObject</span>(<span class="params">obj</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> obj !== <span class="literal">null</span> &amp;&amp; <span class="keyword">typeof</span> obj === <span class="string">'object'</span>;</span><br><span class="line"> &#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">findSource</span>(<span class="params">arr,item</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i= <span class="number">0</span>;i&lt;arr.length;i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(arr[i].source === item)&#123;</span><br><span class="line">            <span class="keyword">return</span> arr[i]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">function</span> <span class="title">cloneDeep3</span>(<span class="params">source,uniqueList = []</span>) </span>&#123;</span><br><span class="line">     <span class="keyword">if</span>(!isObject(source)) &#123;</span><br><span class="line">        <span class="keyword">return</span> source  <span class="comment">//非对象类型返回自身</span></span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">var</span>  uniqueData = findSource(uniqueList,source);</span><br><span class="line">     <span class="keyword">if</span>(uniqueData)&#123;   <span class="comment">//数组已经存在 返回保存的数据</span></span><br><span class="line">        <span class="keyword">return</span> uniqueData.target;</span><br><span class="line">     &#125;</span><br><span class="line">    <span class="keyword">var</span>  target =<span class="built_in">Array</span>.isArray(source)?[]:&#123;&#125;;</span><br><span class="line">    uniqueList.push(&#123; <span class="comment">// 数据不存在 保存原数据</span></span><br><span class="line">        source:source,</span><br><span class="line">        target:target</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> key <span class="keyword">in</span>  source)&#123;</span><br><span class="line">        <span class="keyword">if</span>( <span class="built_in">Object</span>.prototype.hasOwnProperty.call(source,key) ) &#123;</span><br><span class="line">            <span class="keyword">if</span>( isObject(source[key]))&#123; <span class="comment">// 这里增加了类型判断</span></span><br><span class="line">                target[key] = cloneDeep3(source[key],uniqueList); <span class="comment">//传入数组</span></span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                target[key] = source[key];</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> target</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="第四步-引用丢失问题"><a href="#第四步-引用丢失问题" class="headerlink" title="第四步:引用丢失问题"></a>第四步:引用丢失问题</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj1 =&#123;&#125;;</span><br><span class="line"><span class="keyword">var</span> obj2 =&#123;</span><br><span class="line">    a:obj1,</span><br><span class="line">    b:obj1</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(obj2.a === obj1);</span><br><span class="line"><span class="comment">// true</span></span><br><span class="line"><span class="built_in">console</span>.log(obj2.a === obj2.b);</span><br><span class="line"><span class="comment">// true;</span></span><br><span class="line">obj3 = cloneDeep2(obj2);</span><br><span class="line"><span class="built_in">console</span>.log(obj3.a === obj1);</span><br><span class="line"><span class="comment">// false</span></span><br><span class="line"><span class="built_in">console</span>.log(obj3.b === obj1);</span><br><span class="line"><span class="comment">// false</span></span><br><span class="line"><span class="built_in">console</span>.log(obj3.a === obj3.b);</span><br><span class="line"><span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+<p>引用丢失在某些情况下是有问题的，比如上面的对象 obj2，obj2 的键值 a 和 b 同时引用了同一个对象 obj1，使用 cloneDeep2 进行深拷贝后就丢失了引用关系变成了两个不同的对象<br>你发现我在这里使用的是<code>cloneDeep2</code>因为这个问题在<code>cloneDeep3</code>中已经解决了该问题了</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">obj3 = cloneDeep3(obj2);</span><br><span class="line"><span class="built_in">console</span>.log(obj3.a === obj1);</span><br><span class="line"><span class="comment">// false</span></span><br><span class="line"><span class="built_in">console</span>.log(obj3.b === obj1);</span><br><span class="line"><span class="comment">// false</span></span><br><span class="line"><span class="built_in">console</span>.log(obj3.a === obj3.b);</span><br><span class="line"><span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+<h2 id="第五步-拷贝-Symbol"><a href="#第五步-拷贝-Symbol" class="headerlink" title="第五步:拷贝 Symbol"></a>第五步:拷贝 <code>Symbol</code></h2><p>我再之前的实现<code>Object.assign(...)</code>中已经介绍了一些方法<code>Object.getOwnPropertySymbols</code>与<code>Reflect.ownKeys</code>,下面介绍两种写法 </p>
+<h3 id="1-Object-getOwnPropertySymbols"><a href="#1-Object-getOwnPropertySymbols" class="headerlink" title="1.Object.getOwnPropertySymbols"></a>1.<code>Object.getOwnPropertySymbols</code></h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isObject</span>(<span class="params">obj</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> obj !== <span class="literal">null</span> &amp;&amp; <span class="keyword">typeof</span> obj === <span class="string">'object'</span>;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">function</span> <span class="title">cloneDeep5</span>(<span class="params">source,hash = new WeakMap(</span>)) </span>&#123;</span><br><span class="line">     <span class="keyword">if</span>(!isObject(source)) &#123;</span><br><span class="line">        <span class="keyword">return</span> source  <span class="comment">//非对象类型返回自身</span></span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">if</span>(hash.get(source)) &#123; <span class="comment">// 查找hash表,已经存在就返回</span></span><br><span class="line">        <span class="keyword">return</span> hash.get(source)</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span>  target =<span class="built_in">Array</span>.isArray(source)?[]:&#123;&#125;;</span><br><span class="line">    hash.set(source,target);<span class="comment">//新增has表</span></span><br><span class="line"></span><br><span class="line">         <span class="comment">//===== 新增 Symbol的处理</span></span><br><span class="line">     <span class="keyword">let</span> SymKeys = <span class="built_in">Object</span>.getOwnPropertySymbols(source);</span><br><span class="line">     <span class="keyword">if</span>(SymKeys.length)&#123;</span><br><span class="line">         SymKeys.forEach(<span class="function"><span class="params">symkey</span> =&gt;</span> &#123;</span><br><span class="line">             <span class="keyword">if</span>(isObject(source[symkey]))&#123;</span><br><span class="line">                 target[symkey] = cloneDeep5(source[symkey])</span><br><span class="line">             &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                target[symkey] = source[symkey]</span><br><span class="line">             &#125;</span><br><span class="line">         &#125;)</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="comment">// =====</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> key <span class="keyword">in</span>  source)&#123;</span><br><span class="line">        <span class="keyword">if</span>( <span class="built_in">Object</span>.prototype.hasOwnProperty.call(source,key) ) &#123;</span><br><span class="line">            <span class="keyword">if</span>( isObject(source[key]))&#123; <span class="comment">// 这里增加了类型判断</span></span><br><span class="line">                target[key] = cloneDeep5(source[key],hash);</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                target[key] = source[key];</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> target</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-Reflect-ownKeys"><a href="#2-Reflect-ownKeys" class="headerlink" title="2.Reflect.ownKeys"></a>2.<code>Reflect.ownKeys</code></h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isObject</span>(<span class="params">obj</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> obj !== <span class="literal">null</span> &amp;&amp; <span class="keyword">typeof</span> obj === <span class="string">'object'</span>;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">function</span> <span class="title">cloneDeep5</span>(<span class="params">source,hash = new WeakMap(</span>)) </span>&#123;</span><br><span class="line">     <span class="keyword">if</span>(!isObject(source)) &#123;</span><br><span class="line">        <span class="keyword">return</span> source  <span class="comment">//非对象类型返回自身</span></span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">if</span>(hash.get(source)) &#123; <span class="comment">// 查找hash表,已经存在就返回</span></span><br><span class="line">        <span class="keyword">return</span> hash.get(source)</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span>  target =<span class="built_in">Array</span>.isArray(source)?[]:&#123;&#125;;</span><br><span class="line">    hash.set(source,target);<span class="comment">//新增has表</span></span><br><span class="line">    <span class="comment">// ==== 更改代码</span></span><br><span class="line">    <span class="built_in">Reflect</span>.ownKeys(source).forEach(<span class="function"><span class="params">key</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span>( isObject(source[key]))&#123; <span class="comment">// 这里增加了类型判断</span></span><br><span class="line">            target[key] = cloneDeep5(source[key],hash);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            target[key] = source[key];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">return</span> target</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试代码<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = &#123;&#125;</span><br><span class="line"><span class="keyword">var</span> sym1 = <span class="built_in">Symbol</span>(<span class="string">"a"</span>); <span class="comment">// 创建新的symbol类型</span></span><br><span class="line"><span class="keyword">var</span> sym2 = <span class="built_in">Symbol</span>.for(<span class="string">"b"</span>); <span class="comment">// 从全局的symbol注册?表设置和取得symbol</span></span><br><span class="line"></span><br><span class="line">a[sym1] = <span class="string">"localSymbol"</span>;</span><br><span class="line">a[sym2] = <span class="string">"globalSymbol"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> b = cloneDeep5(a);</span><br><span class="line"><span class="built_in">console</span>.log(b);</span><br><span class="line"><span class="comment">// &#123; [Symbol(a)]: 'localSymbol', [Symbol(b)]: 'globalSymbol' &#125;</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="第六步-递归爆栈"><a href="#第六步-递归爆栈" class="headerlink" title="第六步:递归爆栈"></a>第六步:递归爆栈</h2><p>上面的方法是使用递归,但是递归有个问题就是会爆栈,错误提示如下<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// RangeError: Maximum call stack size exceeded</span></span><br></pre></td></tr></table></figure></p>
+<p>如何解决,就是使用循环解决,即使用广度优先的遍历方式</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">cloneDeep5</span>(<span class="params">source</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> root = &#123;&#125;;</span><br><span class="line">    <span class="keyword">const</span> loopList = [</span><br><span class="line">        &#123;</span><br><span class="line">            parent:root,</span><br><span class="line">            key:<span class="literal">undefined</span>,</span><br><span class="line">            data:source</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">    <span class="keyword">const</span> hash = <span class="keyword">new</span> <span class="built_in">WeakMap</span>();</span><br><span class="line">    <span class="keyword">while</span>(loopList.length) &#123;</span><br><span class="line">        <span class="keyword">const</span> node = loopList.shift();</span><br><span class="line">        <span class="keyword">const</span> parent = node.parent;</span><br><span class="line">        <span class="keyword">const</span> key = node.key;</span><br><span class="line">        <span class="keyword">const</span> data = node.data;</span><br><span class="line">        <span class="keyword">let</span> res = parent;</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">typeof</span> key !== <span class="string">'undefined'</span>)&#123;</span><br><span class="line">            res = parent[key] = &#123;&#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(hash.get(data))&#123;</span><br><span class="line">            parent[key] = hash.get(data);</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        hash.set(data,res)</span><br><span class="line">        <span class="built_in">Reflect</span>.ownKeys(data).forEach(<span class="function"><span class="params">k</span> =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">if</span>(isObject(data[k]))&#123;</span><br><span class="line">                loopList.push(&#123;</span><br><span class="line">                    parent:res,</span><br><span class="line">                    key:k,</span><br><span class="line">                    data:data[k]</span><br><span class="line">                &#125;)</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                res[k] = data[k]</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> root</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag"># javascript</a>
+          
+            <a href="/tags/深拷贝/" rel="tag"># 深拷贝</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/15/js/完美深拷贝2/" rel="next" title="完美深拷贝的实现(二)">
+                <i class="fa fa-chevron-left"></i> 完美深拷贝的实现(二)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="LoRi.Wang">
+          <p class="site-author-name" itemprop="name">LoRi.Wang</p>
+           
+              <p class="site-description motion-element" itemprop="description">一步一步前行</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/">
+                <span class="site-state-item-count">35</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">18</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#深拷贝的实现"><span class="nav-number">1.</span> <span class="nav-text">深拷贝的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一步-简单实现"><span class="nav-number">1.1.</span> <span class="nav-text">第一步: 简单实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二步-拷贝数组"><span class="nav-number">1.2.</span> <span class="nav-text">第二步: 拷贝数组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-对象的判断"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. 对象的判断</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三步-循环引用"><span class="nav-number">1.3.</span> <span class="nav-text">第三步: 循环引用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-使用哈希表"><span class="nav-number">1.3.1.</span> <span class="nav-text">1.使用哈希表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-使用数组保存"><span class="nav-number">1.3.2.</span> <span class="nav-text">2.使用数组保存</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四步-引用丢失问题"><span class="nav-number">1.4.</span> <span class="nav-text">第四步:引用丢失问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第五步-拷贝-Symbol"><span class="nav-number">1.5.</span> <span class="nav-text">第五步:拷贝 Symbol</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Object-getOwnPropertySymbols"><span class="nav-number">1.5.1.</span> <span class="nav-text">1.Object.getOwnPropertySymbols</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Reflect-ownKeys"><span class="nav-number">1.5.2.</span> <span class="nav-text">2.Reflect.ownKeys</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第六步-递归爆栈"><span class="nav-number">1.6.</span> <span class="nav-text">第六步:递归爆栈</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LoRi.Wang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
