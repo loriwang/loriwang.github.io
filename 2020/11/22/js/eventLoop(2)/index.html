@@ -1,0 +1,825 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="javascript,event loop,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0">
+
+
+
+
+
+
+<meta name="description" content="我们上次说了Event Loop说了宏任务,微任务甚至引擎的timer等,但是还有更深入的一般注意不到的地方,比如:  每一轮 Event Loop 都会伴随着渲染吗？ requestAnimationFrame 在哪个阶段执行，在渲染前还是后？在 microTask 的前还是后？ requestIdleCallback 在哪个阶段执行？如何去执行？在渲染前还是后？在 microTask 的前还是">
+<meta name="keywords" content="javascript,event loop">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从做题弄懂eventLoop(二)">
+<meta property="og:url" content="http://yoursite.com/2020/11/22/js/eventLoop(2)/index.html">
+<meta property="og:site_name" content="loriWang`s Blog">
+<meta property="og:description" content="我们上次说了Event Loop说了宏任务,微任务甚至引擎的timer等,但是还有更深入的一般注意不到的地方,比如:  每一轮 Event Loop 都会伴随着渲染吗？ requestAnimationFrame 在哪个阶段执行，在渲染前还是后？在 microTask 的前还是后？ requestIdleCallback 在哪个阶段执行？如何去执行？在渲染前还是后？在 microTask 的前还是">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://drafts.csswg.org/cssom-view/#pending-scroll-event-targets">
+<meta property="og:image" content="https://camo.githubusercontent.com/950def1d5876c9db884887c208e9f3f9889bad2a9fb02510e115a801dd1c92c8/68747470733a2f2f757365722d676f6c642d63646e2e786974752e696f2f323032302f352f32312f313732333632303637323132333430663f773d37333726683d31333926663d706e6726733d3139333133">
+<meta property="og:image" content="https://camo.githubusercontent.com/38073d81958a613ab75284c2e109065c3a8517322eee2da042db05e7f60291a8/68747470733a2f2f757365722d676f6c642d63646e2e786974752e696f2f323032302f352f32312f313732333632303963383663323438663f773d36373026683d31373326663d706e6726733d3139353331">
+<meta property="og:updated_time" content="2020-11-22T15:21:23.920Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从做题弄懂eventLoop(二)">
+<meta name="twitter:description" content="我们上次说了Event Loop说了宏任务,微任务甚至引擎的timer等,但是还有更深入的一般注意不到的地方,比如:  每一轮 Event Loop 都会伴随着渲染吗？ requestAnimationFrame 在哪个阶段执行，在渲染前还是后？在 microTask 的前还是后？ requestIdleCallback 在哪个阶段执行？如何去执行？在渲染前还是后？在 microTask 的前还是">
+<meta name="twitter:image" content="https://drafts.csswg.org/cssom-view/#pending-scroll-event-targets">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/11/22/js/eventLoop(2)/">
+
+
+
+
+
+  <title> 从做题弄懂eventLoop(二) | loriWang`s Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">loriWang`s Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一步一步前行</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/11/22/js/eventLoop(2)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="LoRi.Wang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="loriWang`s Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                从做题弄懂eventLoop(二)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-22T16:00:00+08:00">
+                2020-11-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/javascript/" itemprop="url" rel="index">
+                    <span itemprop="name">javascript</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>我们上次说了<code>Event Loop</code>说了宏任务,微任务甚至引擎的timer等,但是还有更深入的一般注意不到的地方,比如:</p>
+<ul>
+<li>每一轮 <code>Event Loop</code> 都会伴随着渲染吗？</li>
+<li><code>requestAnimationFrame</code> 在哪个阶段执行，在渲染前还是后？在 microTask 的前还是后？</li>
+<li><code>requestIdleCallback</code> 在哪个阶段执行？如何去执行？在渲染前还是后？在 microTask 的前还是后？</li>
+<li><code>resize</code>、<code>scroll</code> 这些事件是何时去派发的。<br>我们先看一道面试题<h3 id="第1题"><a href="#第1题" class="headerlink" title="第1题"></a>第1题</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">document</span>.body.style.background = <span class="string">"red"</span></span><br><span class="line">  setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">document</span>.body.style.background = <span class="string">"blue"</span></span><br><span class="line">  &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="第二题"><a href="#第二题" class="headerlink" title="第二题"></a>第二题</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="number">1</span>);</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="number">2</span>)</span><br><span class="line">  requestAnimationFrame(<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="number">3</span>))</span><br><span class="line">&#125;)</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="number">4</span>)</span><br><span class="line">  requestAnimationFrame(<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="number">5</span>))</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">6</span>)</span><br><span class="line">    resolve()</span><br><span class="line">&#125;).then(<span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">7</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">8</span>)</span><br></pre></td></tr></table></figure>
+<p>浏览器渲染了几次?</p>
+<h2 id="事件循环"><a href="#事件循环" class="headerlink" title="事件循环"></a>事件循环</h2><ul>
+<li><p>从任务队列中取出一个宏任务并执行。</p>
+</li>
+<li><p>检查微任务队列，执行并清空微任务队列，如果在<strong>微任务的执行中又加入了新的微任务</strong>，也会在这一步一起执行。</p>
+</li>
+<li><p>进入更新渲染阶段，判断是否需要渲染，这里有一个 <code>rendering opportunity(渲染时机)</code> 的概念，也就是说不一定每一轮 event loop 都会对应一次浏览 器渲染，要根据屏幕刷新率、页面性能、页面是否在后台运行来共同决定，通常来说这个渲染间隔是固定的。（所以多个 task 很可能在一次渲染之间执行）</p>
+<ul>
+<li>浏览器会尽可能的保持帧率稳定，例如页面性能无法维持 60fps（每 16.66ms 渲染一次）的话，那么浏览器就会选择 30fps 的更新速率，而不是偶尔丢帧。</li>
+<li>如果浏览器上下文不可见，那么页面会降低到 4fps 左右甚至更低。</li>
+<li>如果满足以下条件，也会跳过渲染：<ul>
+<li>浏览器判断更新渲染不会带来视觉上的改变。</li>
+<li><code>map of animation frame callbacks</code> 为空，也就是帧动画回调为空，可以通过 <code>requestAnimationFrame</code> 来请求帧动画。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>如果上述的判断决定本轮不需要渲染，那么下面的几步也不会继续运行：<blockquote>
+<p>This step enables the user agent to prevent the steps below from running for other reasons, for example, to ensure certain tasks are executed immediately after each other, with only microtask checkpoints interleaved (and without, e.g., animation frame callbacks interleaved). Concretely, a user agent might wish to coalesce timer callbacks together, with no intermediate rendering updates.<br>  有时候浏览器希望两次「定时器任务」是合并的，他们之间只会穿插着 microTask的执行，而不会穿插屏幕渲染相关的流程（比如requestAnimationFrame，下面会写一个例子）。</p>
+</blockquote>
+</li>
+<li>对于需要渲染的文档，如果窗口的大小发生了变化，执行监听的 resize 方法。</li>
+<li><p>对于需要渲染的文档，如果页面发生了滚动，执行 scroll 方法。</p>
+</li>
+<li><p>对于需要渲染的文档，执行帧动画回调，也就是 requestAnimationFrame 的回调。（后文会详解）</p>
+</li>
+<li><p>对于需要渲染的文档， 执行 IntersectionObserver 的回调。</p>
+</li>
+<li><p>对于需要渲染的文档，重新渲染绘制用户界面。</p>
+</li>
+<li><p>判断 <code>task</code>队列和<code>microTask</code>队列是否都为空，如果是的话，则进行 Idle 空闲周期的算法，判断是否要执行 <code>requestIdleCallback</code> 的回调函数。（后文会详解）</p>
+</li>
+</ul>
+<p>对于resize 和 scroll来说，并不是到了这一步才去执行滚动和缩放，那岂不是要延迟很多？浏览器当然会立刻帮你滚动视图，根据<a href="https://drafts.csswg.org/cssom-view/#scrolling-events" target="_blank" rel="noopener">CSSOM 规范</a>所讲，浏览器会保存一个 <img src="https://drafts.csswg.org/cssom-view/#pending-scroll-event-targets" alt="`pending scroll event targets`">，等到事件循环中的 scroll这一步，去派发一个事件到对应的目标上，驱动它去执行监听的回调函数而已。resize也是同理。</p>
+<h2 id="多任务队列"><a href="#多任务队列" class="headerlink" title="多任务队列"></a>多任务队列</h2><p>task 队列并不是我们想象中的那样只有一个，根据规范里的描述：</p>
+<blockquote>
+<p>An event loop has one or more task queues. For example, a user agent could have one task queue for mouse and key events (to which the user interaction task source is associated), and another to which all other task sources are associated. Then, using the freedom granted in the initial step of the event loop processing model, it could give keyboard and mouse events preference over other tasks three-quarters of the time, keeping the interface responsive but not starving other task queues. Note that in this setup, the processing model still enforces that the user agent would never process events from any one task source out of order.<br>事件循环中可能会有一个或多个任务队列，这些队列分别为了处理：</p>
+<ul>
+<li>鼠标和键盘事件</li>
+<li>其他的一些 Task</li>
+<li>浏览器会在保持任务顺序的前提下，可能分配四分之三的优先权给鼠标和键盘事件，保证用户的输入得到最高优先级的响应，而剩下的优先级交给其他 Task，并且保证不会“饿死”它们。<br>这个规范也导致 Vue 2.0.0-rc.7 这个版本 nextTick 采用了从微任务 MutationObserver 更换成宏任务 postMessage 而导致了一个 <a href="https://github.com/vuejs/vue/issues/3771#issuecomment-249692588" target="_blank" rel="noopener">Issue</a>。<br>简单描述一下就是采用了 <code>task</code> 实现的 <code>nextTick</code>，在用户持续滚动的情况下 <code>nextTick</code> 任务被延后了很久才去执行，导致动画跟不上滚动了。迫于无奈，尤大还是改回了 <code>microTask</code> 去实现 <code>nextTick</code><br>当然目前来说 <code>promise.then</code> 微任务已经比较稳定了，并且 Chrome 也已经实现了 <code>queueMicroTask</code> 这个官方 API。不久的未来，我们想要调用微任务队列的话，也可以节省掉实例化 <code>Promise</code> 在开销了。<br>我们在chrome中可以直接使用<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">queueMicrotask(<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">"mic"</span>))</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</blockquote>
+<p>来创建微任务,不用在使用<code>new Promise().then()</code>的方式去创建一个微任务了</p>
+<h2 id="requestAnimationFrame"><a href="#requestAnimationFrame" class="headerlink" title="requestAnimationFrame"></a>requestAnimationFrame</h2><p>在解读规范的过程中，我们发现 <code>requestAnimationFrame</code> 的回调有两个特征：</p>
+<ul>
+<li>在重新渲染前调用。</li>
+<li>很可能在宏任务之后不调用。</li>
+</ul>
+<p>我们来分析一下，为什么要在重新渲染前去调用？因为 <code>requestAnimationFrame</code> 是官方推荐的用来做一些流畅动画所应该使用的 API，做动画不可避免的会去更改 DOM，而如果在渲染之后再去更改 DOM，那就只能等到下一轮渲染机会的时候才能去绘制出来了，这显然是不合理的。</p>
+<p><code>requestAnimationFrame</code>在浏览器决定渲染之前给你最后一个机会去改变 DOM 属性，然后很快在接下来的绘制中帮你呈现出来，所以这是做流畅动画的不二选择。我们回到第一题去看<br>假设我们现在想要快速的让屏幕上闪烁 <code>红</code>、<code>蓝</code>两种颜色，保证用户可以观察到，如果我们用 <code>setTimeout</code> 来写，并且带着我们长期的误解「宏任务之间一定会伴随着浏览器绘制」，那么你会得到一个预料之外的结果。<br>最后尝试发现在渲染的时候只渲染了一次<br>可以看出这个结果是非常不可控的，如果这两个 Task 之间正好遇到了浏览器认定的渲染机会，那么它会重绘，否则就不会。由于这俩宏任务的间隔周期太短了，所以很大概率是不会的。</p>
+<p>如果你把延时调整到 <code>17ms</code> 那么重绘的概率会大很多，毕竟这个是一般情况下 <code>60fps</code> 的一个指标。但是也会出现很多不绘制的情况，所以并不稳定。</p>
+<p>如果你依赖这个 API 来做动画，那么就很可能会造成「掉帧」。<br>接下来我们换成 rAF 试试？我们用一个递归函数来模拟 10 次颜色变化的动画。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> i = <span class="number">10</span></span><br><span class="line"><span class="keyword">let</span> req = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  i--</span><br><span class="line">  requestAnimationFrame(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">document</span>.body.style.background = <span class="string">"red"</span></span><br><span class="line">    requestAnimationFrame(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">document</span>.body.style.background = <span class="string">"blue"</span></span><br><span class="line">      <span class="keyword">if</span> (i &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        req()</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">req()</span><br></pre></td></tr></table></figure>
+<p>浏览器会非常规律的把这 10 组也就是 20 次颜色变化绘制出来，可以看下 performance 面板记录的表现</p>
+<h2 id="定时器合并"><a href="#定时器合并" class="headerlink" title="定时器合并"></a>定时器合并</h2><p>我们回到第二题:<br><br>在解读规范的时候，第 4 点中提到了，定时器宏任务可能会直接跳过渲染。<br>所以第二题的答案是<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">6</span></span><br><span class="line"><span class="number">8</span></span><br><span class="line"><span class="number">7</span></span><br><span class="line"><span class="number">2</span></span><br><span class="line"><span class="number">4</span></span><br><span class="line"><span class="number">3</span></span><br><span class="line"><span class="number">5</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="requestIdleCallback"><a href="#requestIdleCallback" class="headerlink" title="requestIdleCallback"></a>requestIdleCallback</h2><p>我们都知道 requestIdleCallback 是浏览器提供给我们的空闲调度算法，关于它的简介可以看 <a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Window/requestIdleCallback" target="_blank" rel="noopener">MDN 文档</a>，意图是让我们把一些计算量较大但是又没那么紧急的任务放到空闲时间去执行。不要去影响浏览器中优先级较高的任务，比如动画绘制、用户输入等等。<br>下图很精确的描述了这个 API 的意图：<br><img src="https://camo.githubusercontent.com/950def1d5876c9db884887c208e9f3f9889bad2a9fb02510e115a801dd1c92c8/68747470733a2f2f757365722d676f6c642d63646e2e786974752e696f2f323032302f352f32312f313732333632303637323132333430663f773d37333726683d31333926663d706e6726733d3139333133" alt="requestIdleCallback"></p>
+<p>当然，这种有序的 浏览器 -&gt; 用户 -&gt; 浏览器 -&gt; 用户 的调度基于一个前提，就是我们要把任务切分成比较小的片，不能说浏览器把空闲时间让给你了，你去执行一个耗时 10s 的任务，那肯定也会把浏览器给阻塞住的。这就要求我们去读取 rIC 提供给你的 <code>deadline</code> 里的时间，去动态的安排我们切分的小任务。浏览器信任了你，你也不能辜负它呀。</p>
+<p>还有一种情况，也有可能在几帧的时间内浏览器都是空闲的，并没有发生任何影响视图的操作，它也就不需要去绘制页面：<br>这种情况下为什么还是会有 50ms 的 deadline 呢？是因为浏览器为了提前应对一些可能会突发的用户交互操作，比如用户输入文字。如果给的时间太长了，你的任务把主线程卡住了，那么用户的交互就得不到回应了。50ms 可以确保用户在无感知的延迟下得到回应。<br><img src="https://camo.githubusercontent.com/38073d81958a613ab75284c2e109065c3a8517322eee2da042db05e7f60291a8/68747470733a2f2f757365722d676f6c642d63646e2e786974752e696f2f323032302f352f32312f313732333632303963383663323438663f773d36373026683d31373326663d706e6726733d3139353331" alt="50msdeadline"><br>草案中还提到：</p>
+<ul>
+<li><p>当浏览器判断这个页面对用户不可见时，这个回调执行的频率可能被降低到 10 秒执行一次，甚至更低。这点在解读 EventLoop 中也有提及。</p>
+</li>
+<li><p>如果浏览器的工作比较繁忙的时候，不能保证它会提供空闲时间去执行 rIC 的回调，而且可能会长期的推迟下去。所以如果你需要保证你的任务在一定时间内一定要执行掉，那么你可以给 rIC 传入第二个参数 timeout。这会强制浏览器不管多忙，都在超过这个时间之后去执行 rIC 的回调函数。所以要谨慎使用，因为它会打断浏览器本身优先级更高的工作。</p>
+</li>
+<li><p>最长期限为 50 毫秒，是根据研究得出的，研究表明，人们通常认为 100 毫秒内对用户输入的响应是瞬时的。 将闲置截止期限设置为 50ms 意味着即使在闲置任务开始后立即发生用户输入，浏览器仍然有剩余的 50ms 可以在其中响应用户输入而不会产生用户可察觉的滞后。</p>
+</li>
+<li><p>每次调用 timeRemaining() 函数判断是否有剩余时间的时候，如果浏览器判断此时有优先级更高的任务，那么会动态的把这个值设置为 0，否则就是用预先设置好的 deadline - now 去计算。<br>这个 timeRemaining() 的计算非常动态，会根据很多因素去决定，所以不要指望这个时间是稳定的。</p>
+</li>
+</ul>
+<h3 id="举个栗子"><a href="#举个栗子" class="headerlink" title="举个栗子"></a>举个栗子</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">"en"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"UTF-8"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"viewport"</span> <span class="attr">content</span>=<span class="string">"width=device-width, initial-scale=1.0"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Document<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="undefined">      #SomeElementYouWantToAnimate &#123;</span></span><br><span class="line"><span class="undefined">        height: 200px;</span></span><br><span class="line"><span class="undefined">        width: 200px;</span></span><br><span class="line"><span class="undefined">        background: red;</span></span><br><span class="line"><span class="undefined">      &#125;</span></span><br><span class="line"><span class="undefined">    </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"SomeElementYouWantToAnimate"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> start = <span class="literal">null</span></span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> element = <span class="built_in">document</span>.getElementById(<span class="string">"SomeElementYouWantToAnimate"</span>)</span></span><br><span class="line"><span class="javascript">      element.style.position = <span class="string">"absolute"</span></span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="javascript">      <span class="function"><span class="keyword">function</span> <span class="title">step</span>(<span class="params">timestamp</span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">        <span class="keyword">if</span> (!start) start = timestamp</span></span><br><span class="line"><span class="javascript">        <span class="keyword">var</span> progress = timestamp - start</span></span><br><span class="line"><span class="javascript">        element.style.left = <span class="built_in">Math</span>.min(progress / <span class="number">10</span>, <span class="number">200</span>) + <span class="string">"px"</span></span></span><br><span class="line"><span class="javascript">        <span class="keyword">if</span> (progress &lt; <span class="number">2000</span>) &#123;</span></span><br><span class="line"><span class="javascript">          <span class="built_in">window</span>.requestAnimationFrame(step)</span></span><br><span class="line"><span class="undefined">        &#125;</span></span><br><span class="line"><span class="undefined">      &#125;</span></span><br><span class="line"><span class="javascript">      <span class="comment">// 动画</span></span></span><br><span class="line"><span class="javascript">      <span class="built_in">window</span>.requestAnimationFrame(step)</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="javascript">      <span class="comment">// 空闲调度</span></span></span><br><span class="line"><span class="javascript">      <span class="built_in">window</span>.requestIdleCallback(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span></span><br><span class="line"><span class="javascript">        alert(<span class="string">"rIC"</span>)</span></span><br><span class="line"><span class="undefined">      &#125;)</span></span><br><span class="line"><span class="undefined">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>利用<code>rAF</code>在每帧渲染前的回调中把方块的位置向右移动 10px。<br>最后我加了一个 requestIdleCallback 的函数，回调里会 alert(‘rIC’)，复制一下代码来看一下演示效果.</p>
+<p>alert 在最开始的时候就执行了，为什么会这样呢一下，想一下「空闲」的概念，我们每一帧仅仅是把 left 的值移动了一下，做了这一个简单的渲染，没有占满空闲时间，所以可能在最开始的时候，浏览器就找到机会去调用 rIC 的回调函数了。</p>
+<p>我们简单的修改一下 step 函数，在里面加一个很重的任务，1000 次循环打印。<br>复制代码看一下效果</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">step</span>(<span class="params">timestamp</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!start) start = timestamp</span><br><span class="line">  <span class="keyword">var</span> progress = timestamp - start</span><br><span class="line">  element.style.left = <span class="built_in">Math</span>.min(progress / <span class="number">10</span>, <span class="number">200</span>) + <span class="string">"px"</span></span><br><span class="line">  <span class="keyword">let</span> i = <span class="number">1000</span></span><br><span class="line">  <span class="keyword">while</span> (i &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"i"</span>, i)</span><br><span class="line">    i--</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (progress &lt; <span class="number">2000</span>) &#123;</span><br><span class="line">    <span class="built_in">window</span>.requestAnimationFrame(step)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>和我们预期的一样，由于浏览器的每一帧都”太忙了”,导致它真的就无视我们的 rIC 函数了。</p>
+<p>如果给 rIC 函数加一个 timeout 呢：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 空闲调度</span></span><br><span class="line"><span class="built_in">window</span>.requestIdleCallback(</span><br><span class="line">  () =&gt; &#123;</span><br><span class="line">    alert(<span class="string">"rID"</span>)</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123; <span class="attr">timeout</span>: <span class="number">500</span> &#125;,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>浏览器会在大概 500ms 的时候，不管有多忙，都去强制执行 rIC 函数，这个机制可以防止我们的空闲任务被“饿死”。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>事件循环不一定每轮都伴随着重渲染，但是如果有微任务，一定会伴随着微任务执行。</li>
+<li>决定浏览器视图是否渲染的因素很多，浏览器是非常聪明的。</li>
+<li><code>requestAnimationFram</code>e在重新渲染屏幕之前执行，非常适合用来做动画。</li>
+<li><code>requestIdleCallback</code>在渲染屏幕之后执行，并且是否有空执行要看浏览器的调度，如果你一定要它在某个时间内执行，请使用 timeout参数。</li>
+<li><code>resize</code>和<code>scroll</code>事件其实自带节流，它只在 Event Loop 的渲染阶段去派发事件到 EventTarget 上。</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag"># javascript</a>
+          
+            <a href="/tags/event-loop/" rel="tag"># event loop</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/02/js/函数柯里化/" rel="next" title="函数的柯里化">
+                <i class="fa fa-chevron-left"></i> 函数的柯里化
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/11/22/js/eventLoop(1)/" rel="prev" title="从做题弄懂eventLoop(一)">
+                从做题弄懂eventLoop(一) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="LoRi.Wang">
+          <p class="site-author-name" itemprop="name">LoRi.Wang</p>
+           
+              <p class="site-description motion-element" itemprop="description">一步一步前行</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/">
+                <span class="site-state-item-count">40</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">18</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#第1题"><span class="nav-number">1.</span> <span class="nav-text">第1题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二题"><span class="nav-number">2.</span> <span class="nav-text">第二题</span></a></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#事件循环"><span class="nav-number"></span> <span class="nav-text">事件循环</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多任务队列"><span class="nav-number"></span> <span class="nav-text">多任务队列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#requestAnimationFrame"><span class="nav-number"></span> <span class="nav-text">requestAnimationFrame</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#定时器合并"><span class="nav-number"></span> <span class="nav-text">定时器合并</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#requestIdleCallback"><span class="nav-number"></span> <span class="nav-text">requestIdleCallback</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#举个栗子"><span class="nav-number">1.</span> <span class="nav-text">举个栗子</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number"></span> <span class="nav-text">总结</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LoRi.Wang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

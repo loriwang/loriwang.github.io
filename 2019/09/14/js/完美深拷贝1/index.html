@@ -95,7 +95,7 @@
 <meta property="og:site_name" content="loriWang`s Blog">
 <meta property="og:description" content="深浅拷贝的区别一. 浅拷贝1. 什么是浅拷贝创建一个新对象, 这个对象有原始对象属性值的一份精确拷贝, 如果属性是基本类型, 拷贝的就是基本类型的值, 如果是引用类型, 拷贝的就是内存地址, 所以如果其中一个对象改变了其属性值, 那么就会影响另外一个对象.简单的理解是浅拷贝只解决了第一层的问题，拷贝第一层的 基本类型 值，以及第一层的 引用类型地址 。比如 12345678910111213141">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-09-19T07:07:13.824Z">
+<meta property="og:updated_time" content="2019-09-20T09:02:38.919Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="完美深拷贝的实现(一)">
 <meta name="twitter:description" content="深浅拷贝的区别一. 浅拷贝1. 什么是浅拷贝创建一个新对象, 这个对象有原始对象属性值的一份精确拷贝, 如果属性是基本类型, 拷贝的就是基本类型的值, 如果是引用类型, 拷贝的就是内存地址, 所以如果其中一个对象改变了其属性值, 那么就会影响另外一个对象.简单的理解是浅拷贝只解决了第一层的问题，拷贝第一层的 基本类型 值，以及第一层的 引用类型地址 。比如 12345678910111213141">
@@ -433,10 +433,12 @@
 </li>
 </ul>
 <ul>
-<li><p><code>MessageChannel</code><br> 类似于<code>postMessage</code>也是结构化克隆算法,看下方代码就行了</p>
+<li><p><code>MessageChannel</code><br> 类似于<code>postMessage</code>也是结构化克隆算法,结构化克隆方法都只能用于浏览器端,nodeJS无法使用,看下方代码就行了</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">structuralClone</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> &#123;</span><br><span class="line">            port1,</span><br><span class="line">            port2</span><br><span class="line">        &#125; = <span class="keyword">new</span> MessageChannel();</span><br><span class="line">        port2.onmessage = <span class="function"><span class="params">ev</span> =&gt;</span> resolve(ev.data);</span><br><span class="line">        port1.postMessage(obj);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> obj = <span class="comment">/* ... */</span></span><br><span class="line">    <span class="keyword">const</span> clone = <span class="keyword">await</span> structuralClone(obj);</span><br></pre></td></tr></table></figure>
 </li>
 <li><p><code>indexDB</code> </p>
+</li>
+<li><code>History API</code><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">structuralClone</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> oldState = history.state;</span><br><span class="line">  history.replaceState(obj, <span class="built_in">document</span>.title);</span><br><span class="line">  <span class="keyword">const</span> copy = history.state;</span><br><span class="line">  history.replaceState(oldState, <span class="built_in">document</span>.title);</span><br><span class="line">  <span class="keyword">return</span> copy;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> obj = <span class="comment">/* ... */</span>;</span><br><span class="line"><span class="keyword">const</span> clone = structuralClone(obj);</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
 <p>除了上面介绍的深拷贝方法，常用的还有jQuery.extend() 和 lodash.cloneDeep(), </p>
@@ -566,7 +568,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/">
-                <span class="site-state-item-count">35</span>
+                <span class="site-state-item-count">40</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -588,7 +590,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-count">12</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -646,7 +648,7 @@
         <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2019</span>
+  <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
